@@ -1054,17 +1054,6 @@
             background: rgba(255, 255, 255, 0.4);
         }
 
-        .badge-message {
-            text-align: center;
-            font-size: 0.7rem;
-            color: white;
-            font-weight: 600;
-            padding: 7px 12px;
-            background: rgba(0, 0, 0, 0.15);
-            border-radius: 8px;
-            margin-top: 3px;
-        }
-
         .overlay-footer {
             display: flex;
             justify-content: space-between;
@@ -1629,14 +1618,11 @@
                                     <span class="stat-label">Dias</span>
                                 </div>
                             </div>
-                            <div class="badge-message" id="overlay-message">
-                                Continuo evoluindo! 💪
-                            </div>
                         </div>
                     </div>
                     <div class="overlay-footer">
                         <span id="overlay-date">29 de dezembro, 2024</span>
-                        <span class="overlay-app-name">More One</span>
+                        <span class="overlay-app-name">One More</span>
                     </div>
                 </div>
             </div>
@@ -2471,17 +2457,6 @@
             document.getElementById('overlay-progress').textContent = percentage + '%';
             document.getElementById('overlay-days').textContent = `${completedCount}/${totalGoal}`;
             document.querySelector('.stat-label').textContent = label;
-            
-            // Mensagens motivacionais
-            const messages = [
-                'Continuo evoluindo! 💪',
-                'Um dia de cada vez! 🎯',
-                'Focado no progresso! 🚀',
-                'Construindo meu futuro! ⭐',
-                'Disciplina é liberdade! 🔥',
-                'Cada dia conta! 💯'
-            ];
-            document.getElementById('overlay-message').textContent = messages[Math.floor(Math.random() * messages.length)];
             
             // Data atual
             const today = new Date();
