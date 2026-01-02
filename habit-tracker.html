@@ -2523,17 +2523,12 @@
                     errorMessage = 'Permissão de câmera negada.\n\nPor favor, permita o acesso ou use uma foto da galeria.';
                 } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
                     errorMessage = 'Nenhuma câmera encontrada.\n\nUse uma foto da galeria.';
-                }
                 } else if (error.name === 'SecurityError') {
                     errorMessage = 'Acesso bloqueado por segurança.\n\nUse uma foto da galeria.';
                 }
                 
                 alert(errorMessage);
-                
-                // Mostrar opção de upload da galeria
                 document.getElementById('camera-video').style.display = 'none';
-                document.getElementById('capture-btn').style.display = 'none';
-                document.getElementById('upload-photo').style.display = 'flex';
             }
         }
 
