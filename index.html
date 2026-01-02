@@ -1636,7 +1636,7 @@
                     </div>
                     <div class="overlay-footer">
                         <span id="overlay-date">29 de dezembro, 2024</span>
-                        <span class="overlay-app-name">Rastreador de Hábitos</span>
+                        <span class="overlay-app-name">More One</span>
                     </div>
                 </div>
             </div>
@@ -1689,7 +1689,7 @@
                     </svg>
                     Salvar
                 </button>
-                <button class="btn" id="share-photo" style="display: none;">
+                <button class="btn" id="share-photo">
                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                     </svg>
@@ -2577,8 +2577,11 @@
                         
                         // Atualizar controles
                         document.querySelector('.camera-controls').style.display = 'none';
-                        document.getElementById('after-capture-controls').style.display = 'flex';
+                        document.getElementById('after-capture-controls').style.display = 'grid';
                         document.getElementById('switch-camera-container').style.display = 'none';
+                        
+                        // Gerar imagem final com overlay
+                        generateFinalImage();
                     };
                     img.src = event.target.result;
                 };
@@ -2650,20 +2653,14 @@
             
             // Atualizar controles
             document.querySelector('.camera-controls').style.display = 'none';
-            document.getElementById('after-capture-controls').style.display = 'flex';
+            document.getElementById('after-capture-controls').style.display = 'grid';
             document.getElementById('switch-camera-container').style.display = 'none';
+            
+            // Gerar imagem final com overlay AQUI (uma vez só)
+            await generateFinalImage();
         });
 
-        document.getElementById('cancel-photo').addEventListener('click', () => {
-            document.getElementById('photo-preview').style.display = 'none';
-            document.querySelector('.camera-controls').style.display = 'grid';
-            document.getElementById('after-capture-controls').style.display = 'none';
-            document.getElementById('switch-camera-container').style.display = 'none';
-        });
-
-        let savedImageBlob = null; // Armazenar imagem para compartilhar
-
-        document.getElementById('download-photo').addEventListener('click', async () => {
+        async function generateFinalImage() {
             const canvas = document.getElementById('camera-canvas');
             const overlay = document.getElementById('progress-overlay');
             
@@ -2684,29 +2681,40 @@
             });
             
             // Desenhar o overlay sobre a foto
-            const scale = canvas.width / overlay.offsetWidth;
             finalCtx.drawImage(overlayCanvas, 0, 0, canvas.width, canvas.height);
             
-            // Converter para blob
-            finalCanvas.toBlob(async (blob) => {
-                savedImageBlob = blob; // Salvar para compartilhar depois
-                
-                // Tentar salvar na galeria (mobile)
-                if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                    // Mostrar botão de compartilhar
-                    document.getElementById('share-photo').style.display = 'flex';
-                    showSuccessMessage('Imagem pronta! Use o botão Compartilhar para salvar ou enviar 📱');
-                } else {
-                    // Desktop: fazer download tradicional
-                    const link = document.createElement('a');
-                    link.download = `progresso-${Date.now()}.png`;
-                    link.href = finalCanvas.toDataURL('image/png');
-                    link.click();
-                    
-                    closeCamera();
-                    showSuccessMessage('Imagem salva! 🎉');
-                }
-            }, 'image/png');
+            // Converter para blob e salvar
+            return new Promise((resolve) => {
+                finalCanvas.toBlob((blob) => {
+                    savedImageBlob = blob;
+                    resolve();
+                }, 'image/png');
+            });
+        }
+
+        document.getElementById('cancel-photo').addEventListener('click', () => {
+            document.getElementById('photo-preview').style.display = 'none';
+            document.querySelector('.camera-controls').style.display = 'grid';
+            document.getElementById('after-capture-controls').style.display = 'none';
+            document.getElementById('switch-camera-container').style.display = 'none';
+            savedImageBlob = null; // Limpar imagem salva
+        });
+
+        let savedImageBlob = null; // Armazenar imagem para salvar/compartilhar
+
+        document.getElementById('download-photo').addEventListener('click', async () => {
+            if (!savedImageBlob) {
+                alert('Erro ao salvar. Tente tirar a foto novamente.');
+                return;
+            }
+
+            // Fazer download
+            const link = document.createElement('a');
+            link.download = `progresso-${Date.now()}.png`;
+            link.href = URL.createObjectURL(savedImageBlob);
+            link.click();
+            
+            showSuccessMessage('Imagem salva! 🎉');
         });
 
         // Botão compartilhar (Web Share API)
