@@ -2,7 +2,7 @@
 <html lang="pt-BR">
     <!-- Firebase SDK -->
 <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#BB86FC">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -32,7 +32,7 @@
       // PWA SERVICE WORKER
       if ('serviceWorker' in navigator) {
           window.addEventListener('load', () => {
-              navigator.serviceWorker.register('/service-worker.js')
+              navigator.serviceWorker.register('./service-worker.js')
                   .then((registration) => {
                       console.log('✅ Service Worker registrado');
                   })
