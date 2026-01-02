@@ -994,12 +994,12 @@
         }
 
         .overlay-badge {
-            background: linear-gradient(135deg, rgba(187, 134, 252, 0.85) 0%, rgba(187, 134, 252, 0.75) 100%);
+            background: rgba(0, 0, 0, 0.7);
             border-radius: 12px;
             padding: 12px 14px;
             backdrop-filter: blur(20px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(187, 134, 252, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .badge-icon {
@@ -1095,14 +1095,24 @@
 
         .camera-controls-after {
             padding: 20px;
-            display: flex;
-            gap: 12px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
             background: var(--bg);
             border-top: 1px solid var(--border);
         }
 
-        .camera-controls .btn,
         .camera-controls-after .btn {
+            min-width: auto;
+            padding: 12px 8px;
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .camera-controls .btn {
             min-width: auto;
             padding: 14px 12px;
             font-size: 0.85rem;
@@ -1639,7 +1649,7 @@
                     </svg>
                     Galeria
                 </button>
-                <input type="file" id="photo-file-input" accept="image/*" capture="environment" style="display: none;">
+                <input type="file" id="photo-file-input" accept="image/*" style="display: none;">
                 <button class="btn camera-option-btn" id="capture-btn">
                     <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -1678,6 +1688,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
                     Salvar
+                </button>
+                <button class="btn" id="share-photo" style="display: none;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                    </svg>
+                    Compartilhar
                 </button>
             </div>
         </div>
@@ -2645,6 +2661,8 @@
             document.getElementById('switch-camera-container').style.display = 'none';
         });
 
+        let savedImageBlob = null; // Armazenar imagem para compartilhar
+
         document.getElementById('download-photo').addEventListener('click', async () => {
             const canvas = document.getElementById('camera-canvas');
             const overlay = document.getElementById('progress-overlay');
@@ -2669,17 +2687,63 @@
             const scale = canvas.width / overlay.offsetWidth;
             finalCtx.drawImage(overlayCanvas, 0, 0, canvas.width, canvas.height);
             
-            // Download da imagem
-            const link = document.createElement('a');
-            link.download = `progresso-${Date.now()}.png`;
-            link.href = finalCanvas.toDataURL('image/png');
-            link.click();
-            
-            // Fechar modal
-            closeCamera();
-            
-            // Mensagem de sucesso
-            showSuccessMessage('Imagem salva! Compartilhe nas redes sociais! 🎉');
+            // Converter para blob
+            finalCanvas.toBlob(async (blob) => {
+                savedImageBlob = blob; // Salvar para compartilhar depois
+                
+                // Tentar salvar na galeria (mobile)
+                if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    // Mostrar botão de compartilhar
+                    document.getElementById('share-photo').style.display = 'flex';
+                    showSuccessMessage('Imagem pronta! Use o botão Compartilhar para salvar ou enviar 📱');
+                } else {
+                    // Desktop: fazer download tradicional
+                    const link = document.createElement('a');
+                    link.download = `progresso-${Date.now()}.png`;
+                    link.href = finalCanvas.toDataURL('image/png');
+                    link.click();
+                    
+                    closeCamera();
+                    showSuccessMessage('Imagem salva! 🎉');
+                }
+            }, 'image/png');
+        });
+
+        // Botão compartilhar (Web Share API)
+        document.getElementById('share-photo').addEventListener('click', async () => {
+            if (!savedImageBlob) {
+                alert('Erro ao compartilhar. Tente salvar novamente.');
+                return;
+            }
+
+            try {
+                const file = new File([savedImageBlob], `progresso-${Date.now()}.png`, { type: 'image/png' });
+                
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Meu Progresso de Hábitos',
+                        text: 'Confira meu progresso! 🎯'
+                    });
+                    
+                    closeCamera();
+                    showSuccessMessage('Compartilhado com sucesso! 🎉');
+                } else {
+                    // Fallback: download
+                    const link = document.createElement('a');
+                    link.download = `progresso-${Date.now()}.png`;
+                    link.href = URL.createObjectURL(savedImageBlob);
+                    link.click();
+                    
+                    closeCamera();
+                    showSuccessMessage('Imagem salva! 🎉');
+                }
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    console.error('Erro ao compartilhar:', error);
+                    alert('Não foi possível compartilhar. A imagem foi baixada.');
+                }
+            }
         });
     </script>
 </body>
