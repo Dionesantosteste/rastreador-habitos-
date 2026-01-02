@@ -10,7 +10,7 @@
 
 **Aplicativo web minimalista para rastreamento de hábitos com tema dark mode neon**
 
-[Demo](#) • [Funcionalidades](#funcionalidades) • [Instalação](#instalação) • [Como Usar](#como-usar)
+[Demo]((https://seu-usuario.github.io/rastreador-habitos/) • [Funcionalidades](#funcionalidades) • [Instalação](#instalação) • [Como Usar](#como-usar)
 
 </div>
 
@@ -58,7 +58,7 @@
 
 ```bash
 # Clone o repositório
-git clone https://github.com/SEU-USUARIO/rastreador-habitos.git
+git clone https://dionesantosteste.github.io/rastreador-habitos-/
 
 # Entre na pasta
 cd rastreador-habitos

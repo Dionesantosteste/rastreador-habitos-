@@ -1129,6 +1129,24 @@
             margin-bottom: 4px;
         }
 
+        .switch-camera-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+        }
+
+        .switch-camera-container .btn {
+            padding: 10px 16px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(30, 30, 30, 0.9) !important;
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--primary) !important;
+        }
+
         .camera-btn {
             background: var(--accent);
             display: flex;
@@ -1621,19 +1639,29 @@
                     </svg>
                     Galeria
                 </button>
-                <input type="file" id="photo-file-input" accept="image/*" style="display: none;">
+                <input type="file" id="photo-file-input" accept="image/*" capture="environment" style="display: none;">
                 <button class="btn camera-option-btn" id="capture-btn">
                     <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    Câmera
+                    <span id="camera-btn-text">Câmera</span>
                 </button>
                 <button class="btn btn-secondary camera-option-btn" id="close-camera-btn">
                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                     Voltar
+                </button>
+            </div>
+
+            <!-- Botão trocar câmera (aparece só durante captura) -->
+            <div class="switch-camera-container" id="switch-camera-container" style="display: none;">
+                <button class="btn btn-secondary" id="switch-camera-btn">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Trocar Câmera
                 </button>
             </div>
 
@@ -2371,6 +2399,7 @@
 
         // FUNCIONALIDADE DA CÂMERA
         let cameraStream = null;
+        let currentFacingMode = 'environment'; // 'user' = frontal, 'environment' = traseira
         let currentHabitForShare = null;
 
         async function openCameraForHabit(habitId) {
@@ -2455,17 +2484,22 @@
             try {
                 const video = document.getElementById('camera-video');
                 
+                // Parar stream anterior se existir
+                if (cameraStream) {
+                    cameraStream.getTracks().forEach(track => track.stop());
+                }
+                
                 // Verificar se getUserMedia está disponível
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                     throw new Error('Camera API not supported');
                 }
                 
-                // Tentar obter permissão da câmera
+                // Usar a câmera selecionada (traseira por padrão)
                 const constraints = { 
                     video: { 
-                        facingMode: 'user',
-                        width: { ideal: 1080 },
-                        height: { ideal: 1920 }
+                        facingMode: currentFacingMode,
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
                     } 
                 };
                 
@@ -2474,21 +2508,22 @@
                 
                 document.getElementById('camera-video').style.display = 'block';
                 document.getElementById('photo-preview').style.display = 'none';
-                document.getElementById('capture-btn').style.display = 'flex';
-                document.getElementById('cancel-photo').style.display = 'none';
-                document.getElementById('download-photo').style.display = 'none';
-                document.getElementById('upload-photo').style.display = 'none';
+                document.getElementById('switch-camera-container').style.display = 'block';
+                
+                // Atualizar texto do botão
+                document.getElementById('camera-btn-text').textContent = 
+                    currentFacingMode === 'user' ? 'Câmera Frontal' : 'Câmera Traseira';
+                
             } catch (error) {
                 console.error('Erro ao acessar câmera:', error);
                 
-                let errorMessage = 'Não foi possível acessar a câmera.';
+                let errorMessage = 'Não foi possível acessar a câmera.\n\nVocê pode usar uma foto da galeria.';
                 
                 if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-                    errorMessage = 'Permissão de câmera negada.\n\nVocê pode usar uma foto da galeria em vez disso.';
+                    errorMessage = 'Permissão de câmera negada.\n\nPor favor, permita o acesso ou use uma foto da galeria.';
                 } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
-                    errorMessage = 'Nenhuma câmera encontrada.\n\nVocê pode usar uma foto da galeria.';
-                } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
-                    errorMessage = 'Câmera em uso por outro app.\n\nTente fechar outros apps ou use foto da galeria.';
+                    errorMessage = 'Nenhuma câmera encontrada.\n\nUse uma foto da galeria.';
+                }
                 } else if (error.name === 'SecurityError') {
                     errorMessage = 'Acesso bloqueado por segurança.\n\nUse uma foto da galeria.';
                 }
@@ -2532,6 +2567,7 @@
                         // Atualizar controles
                         document.querySelector('.camera-controls').style.display = 'none';
                         document.getElementById('after-capture-controls').style.display = 'flex';
+                        document.getElementById('switch-camera-container').style.display = 'none';
                     };
                     img.src = event.target.result;
                 };
@@ -2549,10 +2585,23 @@
         function closeCamera() {
             stopCamera();
             document.getElementById('camera-modal').classList.remove('show');
+            document.getElementById('switch-camera-container').style.display = 'none';
+            document.querySelector('.camera-controls').style.display = 'grid';
+            document.getElementById('after-capture-controls').style.display = 'none';
+            // Reset para câmera traseira
+            currentFacingMode = 'environment';
         }
 
         document.getElementById('close-camera').addEventListener('click', closeCamera);
         document.getElementById('close-camera-btn').addEventListener('click', closeCamera);
+
+        // Botão para trocar câmera (frontal/traseira)
+        document.getElementById('switch-camera-btn').addEventListener('click', async () => {
+            // Alternar entre frontal e traseira
+            currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+            // Reiniciar câmera com nova orientação
+            await startCamera();
+        });
 
         document.getElementById('capture-btn').addEventListener('click', async () => {
             const video = document.getElementById('camera-video');
@@ -2591,12 +2640,14 @@
             // Atualizar controles
             document.querySelector('.camera-controls').style.display = 'none';
             document.getElementById('after-capture-controls').style.display = 'flex';
+            document.getElementById('switch-camera-container').style.display = 'none';
         });
 
         document.getElementById('cancel-photo').addEventListener('click', () => {
             document.getElementById('photo-preview').style.display = 'none';
             document.querySelector('.camera-controls').style.display = 'grid';
             document.getElementById('after-capture-controls').style.display = 'none';
+            document.getElementById('switch-camera-container').style.display = 'none';
         });
 
         document.getElementById('download-photo').addEventListener('click', async () => {
