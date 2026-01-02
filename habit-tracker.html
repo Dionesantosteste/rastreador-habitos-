@@ -1,0 +1,2640 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rastreador de Hábitos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #BB86FC;
+            --accent: #03DAC6;
+            --error: #CF6679;
+            --bg: #121212;
+            --surface: #1E1E1E;
+            --text: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-disabled: rgba(255, 255, 255, 0.5);
+            --white: #FFFFFF;
+            --shadow: rgba(0, 0, 0, 0.5);
+            --border: rgba(255, 255, 255, 0.12);
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 440px;
+            margin: 0 auto;
+            padding: 0 24px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Animações */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes checkmark {
+            0% {
+                transform: scale(0) rotate(-45deg);
+            }
+            50% {
+                transform: scale(1.2) rotate(-45deg);
+            }
+            100% {
+                transform: scale(1) rotate(-45deg);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+            line-height: 1.6;
+        }
+
+        .option-card {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .option-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--shadow);
+            border-color: var(--primary);
+        }
+
+        .option-card.selected {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(187, 134, 252, 0.1) 0%, rgba(187, 134, 252, 0.05) 100%);
+            box-shadow: 0 0 20px rgba(187, 134, 252, 0.2);
+        }
+
+        .option-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .option-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary) 0%, #9965f4 100%);
+            color: var(--bg);
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(187, 134, 252, 0.4);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(187, 134, 252, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--primary);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: var(--bg);
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: border-color 0.3s ease;
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(187, 134, 252, 0.2);
+        }
+
+        .habit-item {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 4px 12px var(--shadow);
+            animation: slideIn 0.4s ease;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .habit-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 20px rgba(187, 134, 252, 0.2);
+        }
+
+        .habit-checkbox {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(187, 134, 252, 0.3);
+        }
+
+        .habit-checkbox:hover {
+            border-color: var(--accent);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(3, 218, 198, 0.5);
+        }
+
+        .habit-checkbox.checked {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(3, 218, 198, 0.6);
+        }
+
+        .habit-checkbox.checked::after {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            width: 8px;
+            height: 14px;
+            border: solid var(--bg);
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+            animation: checkmark 0.3s ease;
+        }
+
+        .habit-info {
+            flex: 1;
+        }
+
+        .habit-name {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .habit-identity {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .date-header {
+            text-align: center;
+            padding: 24px 0 20px;
+            margin-bottom: 20px;
+        }
+
+        .date-header h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .date-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Dashboard Stats Cards */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-mini-card {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-mini-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .stat-mini-card.streak-card {
+            border-color: rgba(207, 102, 121, 0.5);
+        }
+
+        .stat-mini-card.streak-card:hover {
+            border-color: var(--error);
+            box-shadow: 0 0 20px rgba(207, 102, 121, 0.3);
+        }
+
+        .stat-mini-card.complete-card {
+            border-color: rgba(3, 218, 198, 0.5);
+        }
+
+        .stat-mini-card.complete-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(3, 218, 198, 0.3);
+        }
+
+        .stat-mini-number {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .streak-card .stat-mini-number {
+            color: var(--error);
+        }
+
+        .complete-card .stat-mini-number {
+            color: var(--accent);
+        }
+
+        .stat-mini-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* Reward Badge */
+        .reward-badge {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: var(--bg);
+            padding: 16px 20px;
+            border-radius: 16px;
+            text-align: center;
+            font-weight: 700;
+            margin: 20px 0;
+            box-shadow: 0 4px 20px rgba(187, 134, 252, 0.4);
+            font-size: 1rem;
+        }
+
+        /* Add Habit Button */
+        .add-habit-btn {
+            width: 100%;
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+
+        /* Mini Calendar Section */
+        .mini-calendar-section {
+            margin-bottom: 24px;
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .mini-calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .day-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-align: center;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .mini-calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+
+        .mini-calendar-day {
+            aspect-ratio: 1;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            background: var(--bg);
+            color: var(--text);
+            cursor: pointer;
+            border: 2px solid var(--border);
+            transition: all 0.2s ease;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .mini-calendar-day:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(187, 134, 252, 0.3);
+        }
+
+        .mini-calendar-day.today {
+            background: var(--primary);
+            color: var(--bg);
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(187, 134, 252, 0.6);
+            border-color: var(--primary);
+        }
+
+        .mini-calendar-day.selected {
+            border-color: var(--accent);
+            border-width: 3px;
+            box-shadow: 0 0 15px rgba(3, 218, 198, 0.4);
+        }
+
+        .mini-calendar-day.has-completions::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 6px rgba(3, 218, 198, 0.8);
+        }
+
+        .mini-calendar-day.today.has-completions::after {
+            background: var(--bg);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 24px 0;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            background: var(--surface);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .calendar-day.completed {
+            background: var(--accent);
+            color: var(--bg);
+            font-weight: 600;
+            box-shadow: 0 0 10px rgba(3, 218, 198, 0.5);
+        }
+
+        .calendar-day.today {
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 10px rgba(187, 134, 252, 0.3);
+        }
+
+        .stats-card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 28px;
+            color: var(--text);
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px var(--shadow);
+            border: 1px solid rgba(187, 134, 252, 0.3);
+        }
+
+        .stats-card h3 {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .stats-card .big-number {
+            font-family: 'Crimson Pro', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .stats-card p {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .message-box {
+            background: linear-gradient(135deg, rgba(224, 122, 95, 0.1) 0%, rgba(224, 122, 95, 0.05) 100%);
+            border-left: 4px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin: 24px 0;
+        }
+
+        .message-box h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .message-box p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .checkbox-group {
+            margin: 16px 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            cursor: pointer;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 12px 0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            box-shadow: 0 -4px 12px var(--shadow);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item:hover {
+            color: var(--accent);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            stroke-width: 2;
+        }
+
+        .spacer {
+            height: 80px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(187, 134, 252, 0.5);
+        }
+
+        .habit-list-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .habit-list-empty svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .onboarding-progress {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 32px;
+        }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            width: 24px;
+            border-radius: 4px;
+            background: var(--accent);
+            opacity: 1;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: auto;
+            padding: 24px 0;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+        }
+
+        .header-section {
+            padding: 40px 0 24px;
+        }
+
+        .content-section {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 24px;
+        }
+
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: var(--accent);
+            color: var(--white);
+            padding: 24px 32px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(129, 178, 154, 0.4);
+            z-index: 1000;
+            animation: pulse 0.5s ease;
+        }
+
+        .success-message.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .success-message h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .success-message p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .btn-icon {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            z-index: 10;
+        }
+
+        .btn-icon:hover {
+            background: rgba(45, 48, 71, 0.1);
+            color: var(--accent);
+            transform: scale(1.1);
+        }
+
+        .btn-icon:active {
+            transform: scale(0.95);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(45, 48, 71, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 24px;
+        }
+
+        .modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: var(--bg);
+            border-radius: 20px;
+            padding: 32px 24px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h2 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .date-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .date-picker-day {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            background: var(--white);
+            color: var(--text);
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .date-picker-day:hover {
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .date-picker-day.selected {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        .date-picker-day.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .date-picker-day.disabled:hover {
+            border-color: transparent;
+            transform: none;
+        }
+
+        .date-picker-header {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 8px 0;
+            font-weight: 600;
+        }
+
+        .mini-calendar-day {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            background: var(--surface);
+            color: var(--text);
+            cursor: pointer;
+            border: 2px solid var(--border);
+            transition: all 0.2s ease;
+            font-weight: 500;
+            box-shadow: 0 2px 6px var(--shadow);
+        }
+
+        .mini-calendar-day:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(187, 134, 252, 0.3);
+        }
+
+        .mini-calendar-day.today {
+            background: var(--primary);
+            color: var(--bg);
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(187, 134, 252, 0.6);
+        }
+
+        .mini-calendar-day.selected {
+            border-color: var(--accent);
+            border-width: 3px;
+            box-shadow: 0 0 15px rgba(3, 218, 198, 0.4);
+        }
+
+        .mini-calendar-day.empty {
+            background: transparent;
+            box-shadow: none;
+            cursor: default;
+            border-color: transparent;
+        }
+
+        .mini-calendar-day.empty:hover {
+            transform: none;
+            border-color: transparent;
+        }
+
+        .habit-item.for-past-date {
+            opacity: 0.7;
+        }
+
+        /* Camera Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 0;
+        }
+
+        .modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .camera-container {
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .close-camera {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .camera-view {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #camera-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+        }
+
+        .photo-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Instagram-style Overlay - Dark Mode with 30% size reduction */
+        .progress-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            pointer-events: none;
+        }
+
+        .overlay-badge {
+            background: linear-gradient(135deg, rgba(187, 134, 252, 0.85) 0%, rgba(187, 134, 252, 0.75) 100%);
+            border-radius: 12px;
+            padding: 12px 14px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(187, 134, 252, 0.3);
+        }
+
+        .badge-icon {
+            display: none;
+        }
+
+        .badge-content h3 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            text-align: center;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .badge-stats {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 8px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-number {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-label {
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.95);
+            margin-top: 3px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 22px;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .badge-message {
+            text-align: center;
+            font-size: 0.7rem;
+            color: white;
+            font-weight: 600;
+            padding: 7px 12px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            margin-top: 3px;
+        }
+
+        .overlay-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-size: 0.55rem;
+            font-weight: 600;
+            padding: 7px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 8px;
+        }
+
+        .overlay-app-name {
+            opacity: 0.9;
+        }
+
+        .camera-controls {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+        }
+
+        .camera-controls-after {
+            padding: 20px;
+            display: flex;
+            gap: 12px;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+        }
+
+        .camera-controls .btn,
+        .camera-controls-after .btn {
+            min-width: auto;
+            padding: 14px 12px;
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .camera-option-btn {
+            background: var(--surface) !important;
+            color: var(--text) !important;
+            border: 2px solid var(--border) !important;
+            box-shadow: none !important;
+        }
+
+        .camera-option-btn:hover {
+            border-color: var(--primary) !important;
+            background: var(--surface) !important;
+            box-shadow: 0 0 15px rgba(187, 134, 252, 0.3) !important;
+        }
+
+        .camera-option-btn svg {
+            margin-bottom: 4px;
+        }
+
+        .camera-btn {
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            font-size: 1rem;
+            padding: 16px 28px;
+        }
+
+        .share-button {
+            background: linear-gradient(135deg, var(--primary) 0%, #9965f4 100%);
+            color: var(--bg);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 12px rgba(187, 134, 252, 0.3);
+        }
+
+        .share-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(187, 134, 252, 0.5);
+        }
+
+        .share-button svg {
+            width: 18px;
+            height: 18px;
+        }
+    </style>
+</head>
+<body>
+    <!-- TELA 1: ONBOARDING -->
+    <div class="screen active" id="onboarding1">
+        <div class="container">
+            <div class="header-section">
+                <div class="onboarding-progress">
+                    <div class="progress-dot active"></div>
+                    <div class="progress-dot"></div>
+                </div>
+                <h1>O que você mais quer melhorar agora?</h1>
+                <p class="subtitle">Escolha uma área para começar sua jornada</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="option-card" data-value="saude">
+                    <h3>🌱 Saúde</h3>
+                    <p>Corpo, energia e bem-estar</p>
+                </div>
+                <div class="option-card" data-value="disciplina">
+                    <h3>⚡ Disciplina</h3>
+                    <p>Foco, consistência e produtividade</p>
+                </div>
+                <div class="option-card" data-value="financas">
+                    <h3>💰 Finanças</h3>
+                    <p>Controle financeiro e prosperidade</p>
+                </div>
+                <div class="option-card" data-value="espiritualidade">
+                    <h3>🧘 Espiritualidade</h3>
+                    <p>Paz interior e conexão</p>
+                </div>
+                <div class="option-card" data-value="relacionamento">
+                    <h3>❤️ Relacionamento</h3>
+                    <p>Conexões e vínculos significativos</p>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn" id="next-onboarding1" disabled>Continuar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA 1.2: ONBOARDING - QUANTIDADE -->
+    <div class="screen" id="onboarding2">
+        <div class="container">
+            <div class="header-section">
+                <div class="onboarding-progress">
+                    <div class="progress-dot"></div>
+                    <div class="progress-dot active"></div>
+                </div>
+                <h1>Quantos hábitos você quer começar?</h1>
+                <p class="subtitle">Menos é mais quando se trata de mudança real</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="option-card" data-value="1">
+                    <h3>1 hábito</h3>
+                    <p>Foco total em uma mudança</p>
+                </div>
+                <div class="option-card" data-value="2">
+                    <h3>2 hábitos</h3>
+                    <p>Equilíbrio entre variedade e foco</p>
+                </div>
+                <div class="option-card selected" data-value="3">
+                    <h3>3 hábitos ⭐</h3>
+                    <p>Recomendado para começar</p>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn" id="start-creating">Criar meus hábitos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA 2: CRIAR HÁBITO -->
+    <div class="screen" id="create-habit">
+        <div class="container">
+            <div class="header-section">
+                <h1>Criar hábito <span id="habit-number">1</span></h1>
+                <p class="subtitle">Menos de 30 segundos para começar</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="input-group">
+                    <label for="habit-name">Nome do hábito</label>
+                    <input type="text" id="habit-name" placeholder="Ex: Meditar 10 minutos">
+                </div>
+
+                <div class="input-group">
+                    <label for="frequency">Frequência</label>
+                    <select id="frequency">
+                        <option value="diario">Diário</option>
+                        <option value="seg-sex">Segunda a Sexta</option>
+                        <option value="fins-semana">Finais de Semana</option>
+                        <option value="dias-totais">Meta de dias totais</option>
+                        <option value="livros">Livros lidos</option>
+                    </select>
+                </div>
+
+                <div class="input-group" id="goal-input" style="display: none;">
+                    <label for="goal-number">Meta</label>
+                    <input type="number" id="goal-number" placeholder="Ex: 240 dias ou 12 livros" min="1">
+                </div>
+
+                <div class="input-group" id="current-book-input" style="display: none;">
+                    <label for="current-book">Livro atual</label>
+                    <input type="text" id="current-book" placeholder="Nome do livro que está lendo">
+                </div>
+
+                <div class="input-group">
+                    <label for="reminder-time">Horário do lembrete (opcional)</label>
+                    <input type="time" id="reminder-time">
+                </div>
+
+                <div class="input-group">
+                    <label for="identity">Esse hábito me aproxima de quem?</label>
+                    <input type="text" id="identity" placeholder="Ex: Uma pessoa disciplinada">
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" id="cancel-habit">Cancelar</button>
+                <button class="btn" id="save-habit">Salvar hábito</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA 3: DASHBOARD DIÁRIO -->
+    <div class="screen" id="dashboard">
+        <div class="container">
+            <div class="date-header">
+                <h2 id="current-date"></h2>
+                <p id="current-weekday"></p>
+            </div>
+
+            <!-- Stats Cards no topo -->
+            <div class="dashboard-stats">
+                <div class="stat-mini-card">
+                    <div class="stat-mini-number" id="total-habits">0</div>
+                    <div class="stat-mini-label">HÁBITOS</div>
+                </div>
+                <div class="stat-mini-card streak-card">
+                    <div class="stat-mini-number" id="current-streak">🔥 0</div>
+                    <div class="stat-mini-label">SEGUIDOS</div>
+                </div>
+                <div class="stat-mini-card complete-card">
+                    <div class="stat-mini-number" id="completion-percent">0%</div>
+                    <div class="stat-mini-label">COMPLETO</div>
+                </div>
+            </div>
+
+            <!-- Mini calendário de 7 dias -->
+            <div class="mini-calendar-section">
+                <div class="mini-calendar-header">
+                    <div class="day-label">D</div>
+                    <div class="day-label">S</div>
+                    <div class="day-label">T</div>
+                    <div class="day-label">Q</div>
+                    <div class="day-label">Q</div>
+                    <div class="day-label">S</div>
+                    <div class="day-label">S</div>
+                </div>
+                <div id="mini-calendar" class="mini-calendar-grid">
+                    <!-- Mini calendário será gerado aqui -->
+                </div>
+            </div>
+            
+            <div class="content-section" id="habits-list">
+                <!-- Hábitos serão inseridos aqui -->
+            </div>
+
+            <!-- Badge de recompensa -->
+            <div class="reward-badge" id="reward-badge" style="display: none;">
+                🏆 <span id="reward-text"></span>
+            </div>
+
+            <!-- Botão adicionar hábito -->
+            <button class="btn add-habit-btn" id="add-habit-dashboard">+ Adicionar Hábito</button>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item active" data-screen="dashboard">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                Hoje
+            </div>
+            <div class="nav-item" data-screen="progress">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Progresso
+            </div>
+            <div class="nav-item" data-screen="create-habit">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Adicionar
+            </div>
+            <div class="nav-item" data-screen="settings">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Config
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA 4: PROGRESSO -->
+    <div class="screen" id="progress">
+        <div class="container">
+            <div class="header-section">
+                <h1>Seu progresso</h1>
+                <p class="subtitle">Cada dia é uma vitória</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="stats-card">
+                    <h3>Taxa de conclusão</h3>
+                    <div class="big-number" id="completion-rate">0%</div>
+                    <p id="completion-text">Você cumpriu 0 de 0 dias</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <h3 style="margin: 24px 0 16px; font-size: 1.1rem;">Últimos 28 dias</h3>
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- Calendário será gerado aqui -->
+                </div>
+
+                <div id="habits-progress">
+                    <!-- Progresso individual dos hábitos -->
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item" data-screen="dashboard">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                Hoje
+            </div>
+            <div class="nav-item active" data-screen="progress">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Progresso
+            </div>
+            <div class="nav-item" data-screen="create-habit">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Adicionar
+            </div>
+            <div class="nav-item" data-screen="settings">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Config
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA 5: FALHA CONSCIENTE -->
+    <div class="screen" id="failure">
+        <div class="container">
+            <div class="header-section" style="text-align: center; padding-top: 80px;">
+                <h1>Você falhou hoje.</h1>
+                <p class="subtitle">Isso não te define.</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="message-box">
+                    <h3>Recomeçar faz parte do processo</h3>
+                    <p>Um dia de falha não apaga seu progresso. O que importa é não desistir. Você tem a escolha de continuar amanhã ou ajustar esse hábito para que fique mais fácil.</p>
+                </div>
+
+                <div style="margin-top: 48px;">
+                    <h3 style="margin-bottom: 16px; font-size: 1.1rem;">O que aconteceu hoje?</h3>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="reason-time">
+                            <label for="reason-time">Falta de tempo</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="reason-tired">
+                            <label for="reason-tired">Cansaço</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="reason-forgot">
+                            <label for="reason-forgot">Esqueci</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" id="adjust-habit">Ajustar hábito</button>
+                <button class="btn" id="continue-tomorrow">Continuar amanhã</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA 6: REVISÃO SEMANAL -->
+    <div class="screen" id="weekly-review">
+        <div class="container">
+            <div class="header-section">
+                <h1>Revisão semanal</h1>
+                <p class="subtitle">Vamos ver como foi sua semana e ajustar o que precisa</p>
+            </div>
+            
+            <div class="content-section">
+                <div class="stats-card">
+                    <h3>Esta semana</h3>
+                    <div class="big-number" id="week-completion">0%</div>
+                    <p>de conclusão dos seus hábitos</p>
+                </div>
+
+                <div id="weekly-habits-review">
+                    <!-- Revisão de cada hábito -->
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn" id="finish-review">Continuar jornada</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA 7: CONFIGURAÇÕES -->
+    <div class="screen" id="settings">
+        <div class="container">
+            <div class="header-section">
+                <h1>Configurações</h1>
+                <p class="subtitle">Gerencie seus hábitos e preferências</p>
+            </div>
+            
+            <div class="content-section">
+                <h3 style="margin-bottom: 16px; font-size: 1.1rem;">Meus hábitos</h3>
+                <div id="settings-habits-list">
+                    <!-- Lista de hábitos para edição -->
+                </div>
+
+                <h3 style="margin: 32px 0 16px; font-size: 1.1rem;">Preferências</h3>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="enable-notifications" checked>
+                        <label for="enable-notifications">Ativar lembretes</label>
+                    </div>
+                </div>
+
+                <div style="margin-top: 32px;">
+                    <button class="btn btn-secondary" style="width: 100%;" id="export-data">Exportar dados</button>
+                </div>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item" data-screen="dashboard">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                Hoje
+            </div>
+            <div class="nav-item" data-screen="progress">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Progresso
+            </div>
+            <div class="nav-item" data-screen="create-habit">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Adicionar
+            </div>
+            <div class="nav-item active" data-screen="settings">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Config
+            </div>
+        </div>
+    </div>
+
+    <!-- Mensagem de sucesso -->
+    <div class="success-message" id="success-message">
+        <h3>Muito bem!</h3>
+        <p id="success-text">Você fez o combinado com você.</p>
+    </div>
+
+    <!-- Modal de Câmera para Compartilhar -->
+    <div class="modal" id="camera-modal">
+        <div class="camera-container">
+            <button class="close-camera" id="close-camera">&times;</button>
+            
+            <!-- Área de captura -->
+            <div class="camera-view" id="camera-view">
+                <video id="camera-video" autoplay playsinline></video>
+                <canvas id="camera-canvas" style="display: none;"></canvas>
+                
+                <!-- Preview da foto tirada -->
+                <div class="photo-preview" id="photo-preview" style="display: none;">
+                    <img id="preview-image" src="" alt="Preview">
+                </div>
+
+                <!-- Overlay com progresso -->
+                <div class="progress-overlay" id="progress-overlay">
+                    <div class="overlay-badge">
+                        <div class="badge-content">
+                            <h3 id="overlay-habit-name">Exercício</h3>
+                            <div class="badge-stats">
+                                <div class="stat-item">
+                                    <span class="stat-number" id="overlay-progress">45%</span>
+                                    <span class="stat-label">Completo</span>
+                                </div>
+                                <div class="stat-divider"></div>
+                                <div class="stat-item">
+                                    <span class="stat-number" id="overlay-days">108/240</span>
+                                    <span class="stat-label">Dias</span>
+                                </div>
+                            </div>
+                            <div class="badge-message" id="overlay-message">
+                                Continuo evoluindo! 💪
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay-footer">
+                        <span id="overlay-date">29 de dezembro, 2024</span>
+                        <span class="overlay-app-name">Rastreador de Hábitos</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controles - 3 opções sempre visíveis -->
+            <div class="camera-controls">
+                <button class="btn btn-secondary camera-option-btn" id="upload-photo">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Galeria
+                </button>
+                <input type="file" id="photo-file-input" accept="image/*" style="display: none;">
+                <button class="btn camera-option-btn" id="capture-btn">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Câmera
+                </button>
+                <button class="btn btn-secondary camera-option-btn" id="close-camera-btn">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Voltar
+                </button>
+            </div>
+
+            <!-- Controles após captura -->
+            <div class="camera-controls-after" id="after-capture-controls" style="display: none;">
+                <button class="btn btn-secondary" id="cancel-photo">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Tirar Outra
+                </button>
+                <button class="btn" id="download-photo">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Constantes
+        const DAYS_FOR_PROGRESS = 28;
+        const DAYS_FOR_STREAK_CHECK = 365;
+        const MINI_CALENDAR_DAYS = 7;
+        
+        // Estado da aplicação
+        let appState = {
+            onboardingData: {
+                focus: null,
+                habitCount: 3
+            },
+            habits: [],
+            completions: {},
+            currentHabitIndex: 0,
+            totalHabitsToCreate: 3,
+            selectedDate: null, // Data selecionada para marcar hábitos
+            books: {} // Livros lidos por hábito
+        };
+
+        // Carregar dados do localStorage
+        function loadData() {
+            const saved = localStorage.getItem('habitTrackerData');
+            if (saved) {
+                appState = JSON.parse(saved);
+                // Garantir que books existe
+                if (!appState.books) {
+                    appState.books = {};
+                }
+                // Garantir que selectedDate existe
+                if (!appState.selectedDate) {
+                    appState.selectedDate = new Date().toISOString().split('T')[0];
+                }
+            }
+        }
+
+        // Salvar dados no localStorage
+        function saveData() {
+            try {
+                localStorage.setItem('habitTrackerData', JSON.stringify(appState));
+            } catch (error) {
+                console.error('Erro ao salvar dados:', error);
+                if (error.name === 'QuotaExceededError') {
+                    alert('Espaço de armazenamento cheio! Por favor, exporte seus dados e limpe o histórico antigo.');
+                } else {
+                    alert('Erro ao salvar dados. Suas alterações podem não ter sido salvas.');
+                }
+            }
+        }
+
+        function loadData() {
+            try {
+                const saved = localStorage.getItem('habitTrackerData');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    // Mesclar com valores padrão para garantir compatibilidade
+                    appState = {
+                        ...appState,
+                        ...parsed,
+                        books: parsed.books || {},
+                        selectedDate: parsed.selectedDate || new Date().toISOString().split('T')[0]
+                    };
+                }
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                alert('Erro ao carregar dados salvos. Iniciando com dados vazios.');
+                // Manter appState padrão em caso de erro
+            }
+        }
+
+        // Inicializar app
+        loadData();
+
+        // Se já tem hábitos, pular onboarding
+        if (appState.habits.length > 0) {
+            showScreen('dashboard');
+        }
+
+        // Funções de navegação
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            
+            // Atualizar navegação
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.screen === screenId);
+            });
+
+            // Atualizar telas que precisam de dados
+            if (screenId === 'dashboard') updateDashboard();
+            if (screenId === 'progress') updateProgress();
+            if (screenId === 'settings') updateSettings();
+        }
+
+        // ONBOARDING 1 - Seleção de foco
+        document.querySelectorAll('#onboarding1 .option-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('#onboarding1 .option-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                appState.onboardingData.focus = this.dataset.value;
+                document.getElementById('next-onboarding1').disabled = false;
+            });
+        });
+
+        document.getElementById('next-onboarding1').addEventListener('click', () => {
+            showScreen('onboarding2');
+        });
+
+        // ONBOARDING 2 - Quantidade de hábitos
+        document.querySelectorAll('#onboarding2 .option-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('#onboarding2 .option-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                appState.onboardingData.habitCount = parseInt(this.dataset.value);
+                appState.totalHabitsToCreate = parseInt(this.dataset.value);
+            });
+        });
+
+        document.getElementById('start-creating').addEventListener('click', () => {
+            appState.currentHabitIndex = 0;
+            updateHabitCreationScreen();
+            showScreen('create-habit');
+        });
+
+        // Mostrar/esconder campos de meta baseado na frequência
+        document.getElementById('frequency').addEventListener('change', function() {
+            const goalInput = document.getElementById('goal-input');
+            const bookInput = document.getElementById('current-book-input');
+            const value = this.value;
+            
+            if (value === 'dias-totais') {
+                goalInput.style.display = 'block';
+                bookInput.style.display = 'none';
+                document.getElementById('goal-number').placeholder = 'Ex: 240 dias';
+            } else if (value === 'livros') {
+                goalInput.style.display = 'block';
+                bookInput.style.display = 'block';
+                document.getElementById('goal-number').placeholder = 'Ex: 12 livros';
+            } else {
+                goalInput.style.display = 'none';
+                bookInput.style.display = 'none';
+            }
+        });
+
+        // CRIAR HÁBITO
+        function updateHabitCreationScreen() {
+            document.getElementById('habit-number').textContent = appState.currentHabitIndex + 1;
+            document.getElementById('habit-name').value = '';
+            document.getElementById('identity').value = '';
+            document.getElementById('reminder-time').value = '';
+            document.getElementById('frequency').value = 'diario';
+            document.getElementById('goal-input').style.display = 'none';
+            document.getElementById('current-book-input').style.display = 'none';
+            document.getElementById('goal-number').value = '';
+            document.getElementById('current-book').value = '';
+        }
+
+        document.getElementById('save-habit').addEventListener('click', () => {
+            const name = document.getElementById('habit-name').value.trim();
+            const frequency = document.getElementById('frequency').value;
+            const reminderTime = document.getElementById('reminder-time').value;
+            const identity = document.getElementById('identity').value.trim();
+            const goalNumber = document.getElementById('goal-number').value;
+            const currentBook = document.getElementById('current-book').value.trim();
+
+            if (!name) {
+                alert('Por favor, dê um nome ao seu hábito');
+                return;
+            }
+
+            if ((frequency === 'dias-totais' || frequency === 'livros') && !goalNumber) {
+                alert('Por favor, defina uma meta');
+                return;
+            }
+
+            const habit = {
+                id: Date.now(),
+                name,
+                frequency,
+                reminderTime,
+                identity,
+                goal: goalNumber ? parseInt(goalNumber) : null,
+                goalType: frequency === 'dias-totais' ? 'days' : frequency === 'livros' ? 'books' : null,
+                createdAt: new Date().toISOString()
+            };
+
+            appState.habits.push(habit);
+            
+            // Inicializar lista de livros se for tipo livros
+            if (frequency === 'livros') {
+                if (!appState.books[habit.id]) {
+                    appState.books[habit.id] = [];
+                }
+                if (currentBook) {
+                    appState.books[habit.id].push({
+                        title: currentBook,
+                        startDate: new Date().toISOString(),
+                        completed: false
+                    });
+                }
+            }
+            
+            appState.currentHabitIndex++;
+
+            if (appState.currentHabitIndex < appState.totalHabitsToCreate) {
+                updateHabitCreationScreen();
+            } else {
+                saveData();
+                showScreen('dashboard');
+            }
+        });
+
+        // Botão cancelar criação de hábito
+        document.getElementById('cancel-habit').addEventListener('click', () => {
+            if (appState.habits.length > 0) {
+                showScreen('dashboard');
+            } else {
+                if (confirm('Você ainda não criou nenhum hábito. Deseja sair do onboarding?')) {
+                    showScreen('onboarding1');
+                }
+            }
+        });
+
+        // DASHBOARD
+        function updateDashboard() {
+            const today = new Date();
+            
+            // Se não há data selecionada, usar hoje
+            if (!appState.selectedDate) {
+                appState.selectedDate = today.toISOString().split('T')[0];
+            }
+            
+            const selectedDateObj = new Date(appState.selectedDate + 'T12:00:00');
+            const isToday = appState.selectedDate === today.toISOString().split('T')[0];
+            
+            // Atualizar cabeçalho
+            document.getElementById('current-date').textContent = selectedDateObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' });
+            document.getElementById('current-weekday').textContent = selectedDateObj.toLocaleDateString('pt-BR', { weekday: 'long' });
+
+            // Calcular estatísticas
+            const totalHabits = appState.habits.length;
+            const completedToday = appState.habits.filter(h => 
+                appState.completions[`${h.id}-${appState.selectedDate}`]
+            ).length;
+            const completionPercent = totalHabits > 0 ? Math.round((completedToday / totalHabits) * 100) : 0;
+            
+            // Calcular streak (dias seguidos)
+            let streak = 0;
+            if (totalHabits > 0) {
+                for (let i = 0; i < DAYS_FOR_STREAK_CHECK; i++) {
+                    const checkDate = new Date(today);
+                    checkDate.setDate(checkDate.getDate() - i);
+                    
+                    // Não contar dias no futuro
+                    if (checkDate > today) continue;
+                    
+                    const dateKey = checkDate.toISOString().split('T')[0];
+                    
+                    const dayCompleted = appState.habits.filter(h => 
+                        appState.completions[`${h.id}-${dateKey}`]
+                    ).length;
+                    
+                    if (dayCompleted > 0) {
+                        streak++;
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            // Atualizar stats cards
+            document.getElementById('total-habits').textContent = totalHabits;
+            document.getElementById('current-streak').textContent = streak > 0 ? `🔥 ${streak}` : '0';
+            document.getElementById('completion-percent').textContent = `${completionPercent}%`;
+
+            // Renderizar mini calendário
+            renderMiniCalendar();
+
+            // Mostrar badge de recompensa
+            const rewardBadge = document.getElementById('reward-badge');
+            const rewardText = document.getElementById('reward-text');
+            if (streak >= 7) {
+                rewardBadge.style.display = 'block';
+                rewardText.textContent = `${streak} dias seguidos! Você está no caminho certo!`;
+            } else if (completionPercent === 100 && totalHabits > 0) {
+                rewardBadge.style.display = 'block';
+                rewardText.textContent = `Parabéns! Você completou todos os hábitos hoje!`;
+            } else {
+                rewardBadge.style.display = 'none';
+            }
+
+            // Renderizar hábitos
+            const habitsList = document.getElementById('habits-list');
+
+            if (appState.habits.length === 0) {
+                habitsList.innerHTML = `
+                    <div class="habit-list-empty">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                        <p>Você ainda não tem hábitos.<br>Que tal criar o primeiro?</p>
+                    </div>
+                `;
+                return;
+            }
+
+            habitsList.innerHTML = appState.habits.map(habit => {
+                const isCompleted = appState.completions[`${habit.id}-${appState.selectedDate}`] || false;
+                const isPastDate = !isToday;
+                
+                let extraInfo = '';
+                let shareButton = '';
+                
+                // Botão de compartilhar só aparece se completou hoje
+                const canShare = isCompleted && isToday;
+                
+                if (habit.goalType === 'days') {
+                    const completedDays = Object.keys(appState.completions).filter(k => 
+                        k.startsWith(`${habit.id}-`) && appState.completions[k]
+                    ).length;
+                    const percentage = Math.round((completedDays / (habit.goal || 1)) * 100);
+                    extraInfo = `<div style="font-size: 0.85rem; color: var(--accent); margin-top: 4px; font-weight: 600;">${completedDays}/${habit.goal || 0} dias (${percentage}%)</div>`;
+                    
+                    if (canShare) {
+                        shareButton = `
+                            <button class="share-button" data-habit-id="${habit.id}">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Compartilhar Progresso
+                            </button>
+                        `;
+                    }
+                } else if (habit.goalType === 'books') {
+                    const habitBooks = appState.books && appState.books[habit.id] ? appState.books[habit.id] : [];
+                    const booksRead = habitBooks.filter(b => b.completed).length;
+                    const currentBook = habitBooks.find(b => !b.completed);
+                    const percentage = Math.round((booksRead / (habit.goal || 1)) * 100);
+                    extraInfo = `<div style="font-size: 0.85rem; color: var(--accent); margin-top: 4px; font-weight: 600;">${booksRead}/${habit.goal || 0} livros (${percentage}%)</div>`;
+                    if (currentBook) {
+                        extraInfo += `<div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">📖 ${currentBook.title}</div>`;
+                    }
+                    
+                    if (canShare) {
+                        shareButton = `
+                            <button class="share-button" data-habit-id="${habit.id}">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Compartilhar Progresso
+                            </button>
+                        `;
+                    }
+                } else {
+                    // Para hábitos sem meta (diário, seg-sex, etc), também mostrar botão de compartilhar
+                    if (canShare) {
+                        // Contar streak atual
+                        let habitStreak = 0;
+                        for (let i = 0; i < 365; i++) {
+                            const checkDate = new Date(today);
+                            checkDate.setDate(checkDate.getDate() - i);
+                            const dateKey = checkDate.toISOString().split('T')[0];
+                            if (appState.completions[`${habit.id}-${dateKey}`]) {
+                                habitStreak++;
+                            } else {
+                                break;
+                            }
+                        }
+                        
+                        if (habitStreak > 0) {
+                            extraInfo = `<div style="font-size: 0.85rem; color: var(--error); margin-top: 4px; font-weight: 600;">🔥 ${habitStreak} dia${habitStreak > 1 ? 's' : ''} seguido${habitStreak > 1 ? 's' : ''}</div>`;
+                        }
+                        
+                        shareButton = `
+                            <button class="share-button" data-habit-id="${habit.id}">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Compartilhar Progresso
+                            </button>
+                        `;
+                    }
+                }
+                
+                return `
+                    <div class="habit-item ${isPastDate ? 'for-past-date' : ''}">
+                        <div class="habit-checkbox ${isCompleted ? 'checked' : ''}" data-habit-id="${habit.id}"></div>
+                        <div class="habit-info">
+                            <div class="habit-name">${habit.name}</div>
+                            ${habit.identity ? `<div class="habit-identity">${habit.identity}</div>` : ''}
+                            ${extraInfo}
+                            ${shareButton}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Event listeners para checkboxes
+            document.querySelectorAll('.habit-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('click', function() {
+                    const habitId = parseInt(this.dataset.habitId);
+                    toggleHabitCompletion(habitId);
+                });
+            });
+
+            // Event listeners para botões de compartilhar
+            document.querySelectorAll('.share-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const habitId = parseInt(this.dataset.habitId);
+                    openCameraForHabit(habitId);
+                });
+            });
+        }
+
+        function renderMiniCalendar() {
+            const today = new Date();
+            const miniCalendar = document.getElementById('mini-calendar');
+            const lastDays = [];
+
+            // Gerar últimos dias (incluindo hoje)
+            for (let i = MINI_CALENDAR_DAYS - 1; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                lastDays.push(date);
+            }
+
+            miniCalendar.innerHTML = lastDays.map(date => {
+                const dateKey = date.toISOString().split('T')[0];
+                const dayNum = date.getDate();
+                const isToday = dateKey === today.toISOString().split('T')[0];
+                const isSelected = dateKey === appState.selectedDate;
+                
+                // Verificar se tem hábitos completos nesse dia
+                const hasCompletions = appState.habits.some(habit => 
+                    appState.completions[`${habit.id}-${dateKey}`]
+                );
+
+                return `
+                    <div class="mini-calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${hasCompletions ? 'has-completions' : ''}" 
+                         data-date="${dateKey}">
+                        ${dayNum}
+                    </div>
+                `;
+            }).join('');
+
+            // Event listeners para os dias
+            document.querySelectorAll('.mini-calendar-day').forEach(day => {
+                day.addEventListener('click', function() {
+                    const selectedDate = this.dataset.date;
+                    appState.selectedDate = selectedDate;
+                    updateDashboard();
+                });
+            });
+        }
+
+        function renderMiniCalendar() {
+            const today = new Date();
+            const miniCalendar = document.getElementById('mini-calendar');
+            const last7Days = [];
+
+            // Gerar últimos 7 dias incluindo hoje
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                last7Days.push(date);
+            }
+
+            // Preencher espaços vazios para alinhar com o dia da semana
+            const firstDayOfWeek = last7Days[0].getDay();
+            
+            let calendarHTML = '';
+            
+            // Adicionar slots vazios
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                calendarHTML += '<div class="mini-calendar-day empty"></div>';
+            }
+
+            // Adicionar dias
+            last7Days.forEach(date => {
+                const dateKey = date.toISOString().split('T')[0];
+                const dayNum = date.getDate();
+                const isToday = dateKey === today.toISOString().split('T')[0];
+                const isSelected = dateKey === appState.selectedDate;
+                
+                calendarHTML += `
+                    <div class="mini-calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}" 
+                         data-date="${dateKey}">
+                        ${dayNum}
+                    </div>
+                `;
+            });
+
+            miniCalendar.innerHTML = calendarHTML;
+
+            // Event listeners para seleção de data
+            document.querySelectorAll('.mini-calendar-day:not(.empty)').forEach(dayEl => {
+                dayEl.addEventListener('click', function() {
+                    appState.selectedDate = this.dataset.date;
+                    updateDashboard();
+                });
+            });
+        }
+
+        const motivationalMessages = [
+            "Você fez o combinado com você.",
+            "Um dia de cada vez.",
+            "Mais um passo na direção certa.",
+            "Pequenas ações, grandes resultados.",
+            "Você está construindo algo maior.",
+            "Consistência é poder.",
+            "Hoje você escolheu ser melhor."
+        ];
+
+        function toggleHabitCompletion(habitId) {
+            const dateKey = appState.selectedDate;
+            const key = `${habitId}-${dateKey}`;
+            
+            appState.completions[key] = !appState.completions[key];
+            
+            if (appState.completions[key]) {
+                showSuccessMessage();
+            }
+            
+            saveData();
+            updateDashboard();
+            updateProgress();
+        }
+
+        function showSuccessMessage(customMessage = null) {
+            const message = customMessage || motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+            const successEl = document.getElementById('success-message');
+            document.getElementById('success-text').textContent = message;
+            
+            successEl.classList.add('show');
+            setTimeout(() => {
+                successEl.classList.remove('show');
+            }, 2000);
+        }
+
+        // PROGRESSO
+        function updateProgress() {
+            // Calcular estatísticas
+            const last28Days = [];
+            const today = new Date();
+            
+            for (let i = DAYS_FOR_PROGRESS - 1; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                last28Days.push(date.toISOString().split('T')[0]);
+            }
+
+            let totalPossible = 0;
+            let totalCompleted = 0;
+
+            appState.habits.forEach(habit => {
+                last28Days.forEach(dateKey => {
+                    totalPossible++;
+                    if (appState.completions[`${habit.id}-${dateKey}`]) {
+                        totalCompleted++;
+                    }
+                });
+            });
+
+            const completionRate = totalPossible > 0 ? Math.round((totalCompleted / totalPossible) * 100) : 0;
+            
+            document.getElementById('completion-rate').textContent = completionRate + '%';
+            document.getElementById('completion-text').textContent = `Você cumpriu ${totalCompleted} de ${totalPossible} dias`;
+            document.getElementById('progress-fill').style.width = completionRate + '%';
+
+            // Calendário
+            const calendarGrid = document.getElementById('calendar-grid');
+            const todayKey = today.toISOString().split('T')[0];
+            
+            calendarGrid.innerHTML = last28Days.map(dateKey => {
+                const dayCompleted = appState.habits.every(habit => 
+                    appState.completions[`${habit.id}-${dateKey}`]
+                );
+                const isToday = dateKey === todayKey;
+                const dayNum = new Date(dateKey).getDate();
+                
+                return `<div class="calendar-day ${dayCompleted ? 'completed' : ''} ${isToday ? 'today' : ''}">${dayNum}</div>`;
+            }).join('');
+
+            // Progresso individual dos hábitos
+            const habitsProgress = document.getElementById('habits-progress');
+            habitsProgress.innerHTML = appState.habits.map(habit => {
+                const habitCompleted = last28Days.filter(dateKey => 
+                    appState.completions[`${habit.id}-${dateKey}`]
+                ).length;
+                const habitRate = Math.round((habitCompleted / 28) * 100);
+                
+                return `
+                    <div style="background: var(--surface); padding: 20px; border-radius: 16px; margin-top: 16px; box-shadow: 0 2px 8px var(--shadow); border: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <strong style="color: var(--text);">${habit.name}</strong>
+                            <span style="color: var(--accent); font-weight: 600;">${habitRate}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${habitRate}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // CONFIGURAÇÕES
+        function updateSettings() {
+            const settingsHabitsList = document.getElementById('settings-habits-list');
+            
+            if (appState.habits.length === 0) {
+                settingsHabitsList.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">Nenhum hábito criado ainda</p>';
+                return;
+            }
+
+            settingsHabitsList.innerHTML = appState.habits.map(habit => `
+                <div style="background: var(--surface); padding: 16px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border);">
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 4px; color: var(--text);">${habit.name}</div>
+                        <div style="font-size: 0.85rem; color: var(--text-secondary);">${habit.frequency === 'diario' ? 'Diário' : habit.frequency === 'seg-sex' ? 'Seg-Sex' : 'Fins de semana'}</div>
+                    </div>
+                    <button class="btn-secondary" style="padding: 8px 16px; font-size: 0.9rem;" onclick="deleteHabit(${habit.id})">Excluir</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteHabit(habitId) {
+            if (confirm('Tem certeza que deseja excluir este hábito?')) {
+                appState.habits = appState.habits.filter(h => h.id !== habitId);
+                saveData();
+                updateSettings();
+                updateDashboard();
+                updateProgress();
+            }
+        }
+
+        document.getElementById('export-data').addEventListener('click', () => {
+            const dataStr = JSON.stringify(appState, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'meus-habitos.json';
+            link.click();
+        });
+
+        // Navegação inferior
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const screen = this.dataset.screen;
+                if (screen === 'create-habit') {
+                    appState.currentHabitIndex = appState.habits.length;
+                    appState.totalHabitsToCreate = appState.habits.length + 1;
+                    updateHabitCreationScreen();
+                }
+                showScreen(screen);
+            });
+        });
+
+        // Botões de falha consciente
+        document.getElementById('continue-tomorrow').addEventListener('click', () => {
+            showScreen('dashboard');
+        });
+
+        document.getElementById('adjust-habit').addEventListener('click', () => {
+            showScreen('create-habit');
+        });
+
+        // Revisão semanal
+        document.getElementById('finish-review').addEventListener('click', () => {
+            showScreen('dashboard');
+        });
+
+        // Navegação inferior
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const screen = this.dataset.screen;
+                if (screen === 'create-habit') {
+                    appState.currentHabitIndex = appState.habits.length;
+                    appState.totalHabitsToCreate = appState.habits.length + 1;
+                    updateHabitCreationScreen();
+                }
+                if (screen === 'dashboard') {
+                    // Resetar para hoje ao voltar para dashboard
+                    appState.selectedDate = new Date().toISOString().split('T')[0];
+                }
+                showScreen(screen);
+            });
+        });
+
+        // Botão adicionar hábito no dashboard
+        document.getElementById('add-habit-dashboard').addEventListener('click', () => {
+            appState.currentHabitIndex = appState.habits.length;
+            appState.totalHabitsToCreate = appState.habits.length + 1;
+            updateHabitCreationScreen();
+            showScreen('create-habit');
+        });
+
+        // Botões de falha consciente
+        document.getElementById('continue-tomorrow').addEventListener('click', () => {
+            showScreen('dashboard');
+        });
+
+        document.getElementById('adjust-habit').addEventListener('click', () => {
+            showScreen('create-habit');
+        });
+
+        // Revisão semanal
+        document.getElementById('finish-review').addEventListener('click', () => {
+            showScreen('dashboard');
+        });
+
+        // FUNCIONALIDADE DA CÂMERA
+        let cameraStream = null;
+        let currentHabitForShare = null;
+
+        async function openCameraForHabit(habitId) {
+            currentHabitForShare = habitId;
+            const habit = appState.habits.find(h => h.id === habitId);
+            
+            if (!habit) return;
+
+            // Calcular estatísticas
+            let completedCount, totalGoal, percentage, label;
+            
+            if (habit.goalType === 'days') {
+                completedCount = Object.keys(appState.completions).filter(k => 
+                    k.startsWith(`${habit.id}-`) && appState.completions[k]
+                ).length;
+                totalGoal = habit.goal || 0;
+                percentage = Math.round((completedCount / totalGoal) * 100);
+                label = 'Dias';
+            } else if (habit.goalType === 'books') {
+                const habitBooks = appState.books && appState.books[habit.id] ? appState.books[habit.id] : [];
+                completedCount = habitBooks.filter(b => b.completed).length;
+                totalGoal = habit.goal || 0;
+                percentage = Math.round((completedCount / totalGoal) * 100);
+                label = 'Livros';
+            } else {
+                // Para hábitos sem meta, mostrar streak
+                const today = new Date();
+                let streak = 0;
+                for (let i = 0; i < 365; i++) {
+                    const checkDate = new Date(today);
+                    checkDate.setDate(checkDate.getDate() - i);
+                    const dateKey = checkDate.toISOString().split('T')[0];
+                    if (appState.completions[`${habit.id}-${dateKey}`]) {
+                        streak++;
+                    } else {
+                        break;
+                    }
+                }
+                
+                // Contar total de dias completos
+                const totalCompleted = Object.keys(appState.completions).filter(k => 
+                    k.startsWith(`${habit.id}-`) && appState.completions[k]
+                ).length;
+                
+                completedCount = streak;
+                totalGoal = totalCompleted;
+                percentage = 100; // Sempre 100% pois completou hoje
+                label = 'Seguidos';
+            }
+
+            // Atualizar overlay
+            document.getElementById('overlay-habit-name').textContent = habit.name;
+            document.getElementById('overlay-progress').textContent = percentage + '%';
+            document.getElementById('overlay-days').textContent = `${completedCount}/${totalGoal}`;
+            document.querySelector('.stat-label').textContent = label;
+            
+            // Mensagens motivacionais
+            const messages = [
+                'Continuo evoluindo! 💪',
+                'Um dia de cada vez! 🎯',
+                'Focado no progresso! 🚀',
+                'Construindo meu futuro! ⭐',
+                'Disciplina é liberdade! 🔥',
+                'Cada dia conta! 💯'
+            ];
+            document.getElementById('overlay-message').textContent = messages[Math.floor(Math.random() * messages.length)];
+            
+            // Data atual
+            const today = new Date();
+            document.getElementById('overlay-date').textContent = today.toLocaleDateString('pt-BR', { 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric' 
+            });
+
+            // Abrir modal e iniciar câmera
+            document.getElementById('camera-modal').classList.add('show');
+            await startCamera();
+        }
+
+        async function startCamera() {
+            try {
+                const video = document.getElementById('camera-video');
+                
+                // Verificar se getUserMedia está disponível
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('Camera API not supported');
+                }
+                
+                // Tentar obter permissão da câmera
+                const constraints = { 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 1080 },
+                        height: { ideal: 1920 }
+                    } 
+                };
+                
+                cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = cameraStream;
+                
+                document.getElementById('camera-video').style.display = 'block';
+                document.getElementById('photo-preview').style.display = 'none';
+                document.getElementById('capture-btn').style.display = 'flex';
+                document.getElementById('cancel-photo').style.display = 'none';
+                document.getElementById('download-photo').style.display = 'none';
+                document.getElementById('upload-photo').style.display = 'none';
+            } catch (error) {
+                console.error('Erro ao acessar câmera:', error);
+                
+                let errorMessage = 'Não foi possível acessar a câmera.';
+                
+                if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                    errorMessage = 'Permissão de câmera negada.\n\nVocê pode usar uma foto da galeria em vez disso.';
+                } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+                    errorMessage = 'Nenhuma câmera encontrada.\n\nVocê pode usar uma foto da galeria.';
+                } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
+                    errorMessage = 'Câmera em uso por outro app.\n\nTente fechar outros apps ou use foto da galeria.';
+                } else if (error.name === 'SecurityError') {
+                    errorMessage = 'Acesso bloqueado por segurança.\n\nUse uma foto da galeria.';
+                }
+                
+                alert(errorMessage);
+                
+                // Mostrar opção de upload da galeria
+                document.getElementById('camera-video').style.display = 'none';
+                document.getElementById('capture-btn').style.display = 'none';
+                document.getElementById('upload-photo').style.display = 'flex';
+            }
+        }
+
+        // Upload de foto da galeria
+        document.getElementById('upload-photo').addEventListener('click', () => {
+            document.getElementById('photo-file-input').click();
+        });
+
+        document.getElementById('photo-file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.getElementById('camera-canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        
+                        const imageData = canvas.toDataURL('image/png');
+                        document.getElementById('preview-image').src = imageData;
+                        document.getElementById('photo-preview').style.display = 'block';
+                        document.getElementById('camera-video').style.display = 'none';
+                        
+                        // Parar câmera se estiver rodando
+                        stopCamera();
+                        
+                        // Atualizar controles
+                        document.querySelector('.camera-controls').style.display = 'none';
+                        document.getElementById('after-capture-controls').style.display = 'flex';
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+        }
+
+        function closeCamera() {
+            stopCamera();
+            document.getElementById('camera-modal').classList.remove('show');
+        }
+
+        document.getElementById('close-camera').addEventListener('click', closeCamera);
+        document.getElementById('close-camera-btn').addEventListener('click', closeCamera);
+
+        document.getElementById('capture-btn').addEventListener('click', async () => {
+            const video = document.getElementById('camera-video');
+            const canvas = document.getElementById('camera-canvas');
+            
+            // Verificar se o vídeo está rodando
+            if (!cameraStream || video.style.display === 'none') {
+                await startCamera();
+                setTimeout(() => {
+                    if (cameraStream) {
+                        // Tentar capturar após iniciar câmera
+                        document.getElementById('capture-btn').click();
+                    }
+                }, 1000);
+                return;
+            }
+            
+            // Configurar canvas com as dimensões do vídeo
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Desenhar o vídeo no canvas
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Parar a câmera
+            stopCamera();
+            
+            // Converter canvas para imagem e mostrar preview
+            const imageData = canvas.toDataURL('image/png');
+            document.getElementById('preview-image').src = imageData;
+            document.getElementById('photo-preview').style.display = 'block';
+            document.getElementById('camera-video').style.display = 'none';
+            
+            // Atualizar controles
+            document.querySelector('.camera-controls').style.display = 'none';
+            document.getElementById('after-capture-controls').style.display = 'flex';
+        });
+
+        document.getElementById('cancel-photo').addEventListener('click', () => {
+            document.getElementById('photo-preview').style.display = 'none';
+            document.querySelector('.camera-controls').style.display = 'grid';
+            document.getElementById('after-capture-controls').style.display = 'none';
+        });
+
+        document.getElementById('download-photo').addEventListener('click', async () => {
+            const canvas = document.getElementById('camera-canvas');
+            const overlay = document.getElementById('progress-overlay');
+            
+            // Criar um novo canvas para a imagem final com overlay
+            const finalCanvas = document.createElement('canvas');
+            finalCanvas.width = canvas.width;
+            finalCanvas.height = canvas.height;
+            const finalCtx = finalCanvas.getContext('2d');
+            
+            // Desenhar a foto
+            finalCtx.drawImage(canvas, 0, 0);
+            
+            // Renderizar o overlay usando html2canvas
+            const html2canvas = (await import('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm')).default;
+            const overlayCanvas = await html2canvas(overlay, {
+                backgroundColor: null,
+                scale: 2
+            });
+            
+            // Desenhar o overlay sobre a foto
+            const scale = canvas.width / overlay.offsetWidth;
+            finalCtx.drawImage(overlayCanvas, 0, 0, canvas.width, canvas.height);
+            
+            // Download da imagem
+            const link = document.createElement('a');
+            link.download = `progresso-${Date.now()}.png`;
+            link.href = finalCanvas.toDataURL('image/png');
+            link.click();
+            
+            // Fechar modal
+            closeCamera();
+            
+            // Mensagem de sucesso
+            showSuccessMessage('Imagem salva! Compartilhe nas redes sociais! 🎉');
+        });
+    </script>
+</body>
+</html>
