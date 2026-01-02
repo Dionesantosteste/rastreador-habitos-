@@ -2652,11 +2652,25 @@
             const html2canvas = (await import('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm')).default;
             const overlayCanvas = await html2canvas(overlay, {
                 backgroundColor: null,
-                scale: 2
+                scale: 2,
+                width: overlay.offsetWidth,
+                height: overlay.offsetHeight
             });
             
-            // Desenhar o overlay sobre a foto
-            finalCtx.drawImage(overlayCanvas, 0, 0, canvas.width, canvas.height);
+            // Calcular escala mantendo proporção
+            const scaleX = canvas.width / overlayCanvas.width;
+            const scaleY = canvas.height / overlayCanvas.height;
+            const scale = Math.min(scaleX, scaleY); // Usar a menor escala para não distorcer
+            
+            const scaledWidth = overlayCanvas.width * scale;
+            const scaledHeight = overlayCanvas.height * scale;
+            
+            // Centralizar overlay
+            const x = (canvas.width - scaledWidth) / 2;
+            const y = (canvas.height - scaledHeight) / 2;
+            
+            // Desenhar o overlay mantendo proporção
+            finalCtx.drawImage(overlayCanvas, x, y, scaledWidth, scaledHeight);
             
             // Converter para blob e salvar
             return new Promise((resolve) => {
