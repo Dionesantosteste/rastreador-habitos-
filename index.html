@@ -631,7 +631,7 @@
             border-top: 1px solid var(--border);
             padding: 12px 0;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr); /* 🎯 ALTERADO: 4 → 5 abas */
             box-shadow: 0 -4px 12px var(--shadow);
         }
 
@@ -1224,6 +1224,241 @@
             width: 18px;
             height: 18px;
         }
+
+        /* 🎯 ESTILOS PARA METAS */
+        .meta-card {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .meta-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .meta-card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .meta-card-objective {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .meta-card-motivo {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .meta-card-status {
+            background: var(--primary);
+            color: var(--bg);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .meta-card-status.concluida {
+            background: var(--accent);
+        }
+
+        .meta-card-status.pausada {
+            background: var(--text-disabled);
+        }
+
+        .meta-card-progress {
+            margin: 16px 0;
+        }
+
+        .meta-card-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .meta-card-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(187, 134, 252, 0.5);
+        }
+
+        .meta-card-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-card-progress-text {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .meta-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .meta-card-trackers {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .meta-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .meta-empty svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .meta-empty h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .meta-empty p {
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .btn-create-meta {
+            background: linear-gradient(135deg, var(--primary) 0%, #9965f4 100%);
+            color: var(--bg);
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(187, 134, 252, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-create-meta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(187, 134, 252, 0.6);
+        }
+
+        .btn-create-meta svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* 🎯 ESTILOS PARA DETALHES DA META */
+        .detail-tracker-item {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .detail-tracker-item:hover {
+            border-color: var(--primary);
+        }
+
+        .detail-tracker-item.completed {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(3, 218, 198, 0.1) 0%, rgba(3, 218, 198, 0.05) 100%);
+        }
+
+        .detail-tracker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .detail-tracker-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .detail-tracker-name.completed::before {
+            content: '✓ ';
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .detail-tracker-name.incomplete::before {
+            content: '✗ ';
+            color: var(--text-disabled);
+            font-weight: bold;
+        }
+
+        .detail-tracker-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            font-size: 0.85rem;
+        }
+
+        .detail-tracker-stat {
+            color: var(--text-secondary);
+        }
+
+        .detail-tracker-stat strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .detail-history-item {
+            background: var(--surface);
+            border-left: 3px solid var(--accent);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .detail-history-date {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .detail-history-value {
+            color: var(--accent);
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -1435,6 +1670,13 @@
                 </svg>
                 Hoje
             </div>
+            <!-- 🎯 NOVA ABA METAS -->
+            <div class="nav-item" data-screen="metas">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+                Metas
+            </div>
             <div class="nav-item" data-screen="progress">
                 <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -1495,7 +1737,277 @@
                 </svg>
                 Hoje
             </div>
+            <!-- 🎯 NOVA ABA METAS -->
+            <div class="nav-item" data-screen="metas">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+                Metas
+            </div>
             <div class="nav-item active" data-screen="progress">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Progresso
+            </div>
+            <div class="nav-item" data-screen="create-habit">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Adicionar
+            </div>
+            <div class="nav-item" data-screen="settings">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Config
+            </div>
+        </div>
+    </div>
+
+    <!-- 🎯 TELA NOVA: METAS -->
+    <div class="screen" id="metas">
+        <div class="container">
+            <div class="header-section">
+                <h1>Minhas Metas</h1>
+                <p class="subtitle">Acompanhe o progresso dos seus objetivos</p>
+            </div>
+            
+            <div class="content-section" id="metas-content">
+                <!-- Conteúdo será inserido via JavaScript -->
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <div class="bottom-nav">
+            <div class="nav-item" data-screen="dashboard">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                Hoje
+            </div>
+            <div class="nav-item active" data-screen="metas">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+                Metas
+            </div>
+            <div class="nav-item" data-screen="progress">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Progresso
+            </div>
+            <div class="nav-item" data-screen="create-habit">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Adicionar
+            </div>
+            <div class="nav-item" data-screen="settings">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Config
+            </div>
+        </div>
+    </div>
+
+    <!-- 🎯 TELA NOVA: CRIAR META -->
+    <div class="screen" id="create-meta">
+        <div class="container">
+            <div class="header-section">
+                <h1>Criar Meta</h1>
+                <p class="subtitle">Transforme seus hábitos em grandes conquistas</p>
+            </div>
+            
+            <div class="content-section">
+                <!-- Nome da Meta -->
+                <div class="input-group">
+                    <label for="meta-name">Nome da meta (o que você vai fazer)</label>
+                    <input type="text" id="meta-name" placeholder="Ex: Ir à academia seg-sex, Ler 30 páginas/dia, Correr 5km">
+                </div>
+
+                <!-- Objetivo (sempre visível) -->
+                <div class="input-group">
+                    <label for="meta-objetivo">O que você quer alcançar?</label>
+                    <input type="text" id="meta-objetivo" placeholder="Ex: Perder 10kg, Ler 12 livros, Correr 100km total">
+                </div>
+                
+                <!-- Motivo (sempre visível e opcional) -->
+                <div class="input-group">
+                    <label for="meta-motivo">Por quê isso é importante? (opcional)</label>
+                    <input type="text" id="meta-motivo" placeholder="Ex: Melhorar saúde, Aumentar conhecimento">
+                </div>
+
+                <!-- Prazo de conclusão -->
+                <div class="input-group">
+                    <label for="meta-deadline">Prazo para conclusão</label>
+                    <input type="date" id="meta-deadline">
+                </div>
+
+                <!-- Frequência -->
+                <div class="input-group">
+                    <label for="meta-frequency">Frequência</label>
+                    <select id="meta-frequency">
+                        <option value="">Selecione a frequência...</option>
+                        <option value="daily">📅 Diário (todos os dias)</option>
+                        <option value="weekdays">🏢 Dias da semana (seg-sex)</option>
+                        <option value="weekend">🏖️ Fins de semana</option>
+                        <option value="custom">🔢 X vezes por semana</option>
+                        <option value="total">🎯 Meta total (foco no valor)</option>
+                    </select>
+                </div>
+
+                <!-- Campo customizado para X vezes por semana -->
+                <div class="input-group" id="custom-frequency-field" style="display: none;">
+                    <label for="times-per-week">Quantas vezes por semana?</label>
+                    <input type="number" id="times-per-week" min="1" max="7" value="3" placeholder="Ex: 3">
+                </div>
+
+                <!-- Meta numérica (opcional) -->
+                <div class="input-group">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="has-numeric-goal" style="width: auto;">
+                        <span>Rastrear quantidade específica (opcional)</span>
+                    </label>
+                </div>
+
+                <!-- Campos para meta numérica -->
+                <div id="numeric-goal-fields" style="display: none;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                        <div class="input-group">
+                            <label for="numeric-target">Quantidade</label>
+                            <input type="number" id="numeric-target" placeholder="Ex: 250" step="0.1" min="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label for="numeric-unit-select">Unidade</label>
+                            <select id="numeric-unit-select">
+                                <option value="">Selecione...</option>
+                                <option value="páginas">📚 Páginas</option>
+                                <option value="km">🏃 Quilômetros (km)</option>
+                                <option value="kg">⚖️ Quilos (kg)</option>
+                                <option value="horas">⏰ Horas</option>
+                                <option value="vezes">🔢 Vezes</option>
+                                <option value="dias">📅 Dias</option>
+                                <option value="R$">💰 Reais (R$)</option>
+                                <option value="custom">✏️ Outra...</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Campo customizado (aparece só se selecionar "Outra") -->
+                    <div class="input-group" id="custom-unit-field" style="display: none;">
+                        <label for="numeric-unit-custom">Qual unidade?</label>
+                        <input type="text" id="numeric-unit-custom" placeholder="Ex: exercícios, capítulos, etc" maxlength="20">
+                    </div>
+                </div>
+
+                <!-- Botão criar micro-hábito automaticamente -->
+                <div class="input-group">
+                    <button type="button" class="btn" id="btn-create-auto-tracker" style="width: 100%; display: none;">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-right: 8px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        <span id="btn-create-auto-tracker-text">✨ Criar micro-hábito automaticamente</span>
+                    </button>
+                </div>
+
+                <!-- Sugestão automática -->
+                <div id="meta-suggestion" style="display: none; background: rgba(3, 218, 198, 0.1); border: 1px solid var(--accent); border-radius: 12px; padding: 16px; margin-top: 16px;">
+                    <h3 style="color: var(--accent); font-size: 0.95rem; margin-bottom: 8px;">💡 Sugestão</h3>
+                    <p id="meta-suggestion-text" style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;"></p>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" id="cancel-meta">Cancelar</button>
+                <button class="btn" id="save-meta">Criar meta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🎯 TELA NOVA: DETALHES DA META -->
+    <div class="screen" id="meta-detail">
+        <div class="container">
+            <!-- Cabeçalho da meta -->
+            <div class="header-section" style="text-align: center;">
+                <h1 id="detail-meta-name">Meta</h1>
+                <p class="subtitle" id="detail-meta-objetivo" style="margin-top: 8px;"></p>
+                <p class="subtitle" id="detail-meta-motivo" style="margin-top: 4px; font-style: italic; font-size: 0.9rem; display: none;">💭 <span id="detail-meta-motivo-text"></span></p>
+            </div>
+            
+            <div class="content-section">
+                <!-- Card de Progresso Principal -->
+                <div class="stats-card">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div class="big-number" id="detail-progress-percent">0%</div>
+                        <p style="margin-top: 8px; color: var(--text-secondary);">completo</p>
+                    </div>
+                    
+                    <div class="progress-bar" style="height: 12px; margin: 20px 0;">
+                        <div class="progress-fill" id="detail-progress-bar" style="width: 0%"></div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 20px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 600; color: var(--accent);" id="detail-current-value">-</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">atual</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: 600; color: var(--primary);" id="detail-days-remaining">-</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">dias restantes</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Micro-hábitos desta meta -->
+                <h3 style="margin: 24px 0 16px; font-size: 1.1rem; color: var(--text);">Micro-hábitos vinculados</h3>
+                <div id="detail-trackers-list">
+                    <!-- Lista de trackers será inserida aqui -->
+                </div>
+
+                <!-- Histórico de progresso -->
+                <h3 style="margin: 24px 0 16px; font-size: 1.1rem; color: var(--text);">Histórico recente</h3>
+                <div id="detail-history">
+                    <!-- Histórico será inserido aqui -->
+                </div>
+
+                <!-- Previsão -->
+                <div class="message-box" id="detail-prediction" style="margin-top: 24px; display: none;">
+                    <h3>📊 Previsão</h3>
+                    <p id="detail-prediction-text"></p>
+                </div>
+            </div>
+
+            <!-- Botões de ação -->
+            <div class="btn-group" style="margin-top: 24px;">
+                <button class="btn btn-secondary" id="btn-back-to-metas">Voltar</button>
+                <button class="btn" id="btn-delete-meta" style="background: var(--error);">Excluir</button>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <!-- Bottom Nav -->
+        <div class="bottom-nav">
+            <div class="nav-item" data-screen="dashboard">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                Hoje
+            </div>
+            <div class="nav-item active" data-screen="metas">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+                Metas
+            </div>
+            <div class="nav-item" data-screen="progress">
                 <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
@@ -1619,6 +2131,13 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
                 Hoje
+            </div>
+            <!-- 🎯 NOVA ABA METAS -->
+            <div class="nav-item" data-screen="metas">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+                Metas
             </div>
             <div class="nav-item" data-screen="progress">
                 <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1820,6 +2339,7 @@ async function saveFirebase() {
             habits: appState.habits,
             completions: appState.completions,
             books: appState.books,
+            metas: appState.metas, // 🎯 Adicionar metas
             selectedDate: appState.selectedDate,
             updated: new Date().toISOString()
         });
@@ -1837,6 +2357,7 @@ async function loadFirebaseData(uid) {
             appState.habits = data.habits || [];
             appState.completions = data.completions || {};
             appState.books = data.books || {};
+            appState.metas = data.metas || []; // 🎯 Adicionar metas
             appState.selectedDate = data.selectedDate || new Date().toISOString().split('T')[0];
         }
     } catch (e) {
@@ -1853,25 +2374,11 @@ async function loadFirebaseData(uid) {
             currentHabitIndex: 0,
             totalHabitsToCreate: 3,
             selectedDate: null, // Data selecionada para marcar hábitos
-            books: {} // Livros lidos por hábito
+            books: {}, // Livros lidos por hábito
+            metas: [] // 🎯 NOVO: Array de metas
         };
 
         // Carregar dados do localStorage
-        function loadData() {
-            const saved = localStorage.getItem('habitTrackerData');
-            if (saved) {
-                appState = JSON.parse(saved);
-                // Garantir que books existe
-                if (!appState.books) {
-                    appState.books = {};
-                }
-                // Garantir que selectedDate existe
-                if (!appState.selectedDate) {
-                    appState.selectedDate = new Date().toISOString().split('T')[0];
-                }
-            }
-        }
-
         // Salvar dados no localStorage
         function saveData() {
     try {
@@ -1892,7 +2399,8 @@ async function loadFirebaseData(uid) {
                         ...appState,
                         ...parsed,
                         books: parsed.books || {},
-                        selectedDate: parsed.selectedDate || new Date().toISOString().split('T')[0]
+                        selectedDate: parsed.selectedDate || new Date().toISOString().split('T')[0],
+                        metas: parsed.metas || [] // 🎯 Garantir que metas existe
                     };
                 }
             } catch (error) {
@@ -1910,6 +2418,223 @@ async function loadFirebaseData(uid) {
             showScreen('dashboard');
         }
 
+        // ========================================
+        // 🎯 FUNÇÕES HELPER PARA METAS
+        // ========================================
+
+        // Criar nova meta
+        function criarMeta(dados) {
+            const meta = {
+                id: Date.now(),
+                nome: dados.nome,
+                objetivo: dados.objetivo, // Ex: "Perder 20kg"
+                motivo: dados.motivo || '', // Ex: "Melhorar saúde"
+                dataCriacao: new Date().toISOString(),
+                dataFim: dados.dataFim, // ISO string
+                status: 'ativa', // ativa | concluida | pausada
+                trackersIds: dados.trackersIds || [], // Array de IDs dos hábitos vinculados
+                metadata: dados.metadata || {} // Dados extras (páginas, peso, etc)
+            };
+            
+            appState.metas.push(meta);
+            
+            // Vincular trackers à meta
+            if (dados.trackersIds && dados.trackersIds.length > 0) {
+                dados.trackersIds.forEach(trackerId => {
+                    const habit = appState.habits.find(h => h.id === trackerId);
+                    if (habit) {
+                        habit.metaId = meta.id;
+                    }
+                });
+            }
+            
+            saveData();
+            return meta;
+        }
+
+        // Calcular progresso de uma meta
+        function calcularProgressoMeta(metaId) {
+            const meta = appState.metas.find(m => m.id === metaId);
+            if (!meta) return 0;
+
+            // Buscar trackers vinculados
+            const trackers = appState.habits.filter(h => h.metaId === metaId);
+            if (trackers.length === 0) return 0;
+
+            // Calcular baseado no tipo de meta
+            let progresso = 0;
+
+            // 🎯 NOVO: Verificar se meta tem valor numérico genérico
+            if (meta.metadata && meta.metadata.valorAlvo) {
+                const valorAtual = meta.metadata.valorAtual || 0;
+                const valorAlvo = meta.metadata.valorAlvo;
+                progresso = Math.round((valorAtual / valorAlvo) * 100);
+            }
+            // Formato antigo: totalPaginas
+            else if (meta.metadata && meta.metadata.totalPaginas) {
+                const paginasLidas = meta.metadata.paginasLidas || 0;
+                progresso = Math.round((paginasLidas / meta.metadata.totalPaginas) * 100);
+            } else {
+                // Calcular baseado em completions dos trackers
+                let totalDias = 0;
+                let diasCompletados = 0;
+
+                trackers.forEach(tracker => {
+                    if (tracker.goalType === 'days' && tracker.goal) {
+                        totalDias += tracker.goal;
+                        // Contar quantos dias foram completados
+                        const completados = Object.keys(appState.completions).filter(k => 
+                            k.startsWith(`${tracker.id}-`) && appState.completions[k]
+                        ).length;
+                        diasCompletados += completados;
+                    } else {
+                        // Para trackers sem meta específica, considerar dias desde criação
+                        const diasDesde = Math.floor(
+                            (new Date() - new Date(tracker.createdAt)) / (1000 * 60 * 60 * 24)
+                        );
+                        const completados = Object.keys(appState.completions).filter(k => 
+                            k.startsWith(`${tracker.id}-`) && appState.completions[k]
+                        ).length;
+                        
+                        if (diasDesde > 0) {
+                            totalDias += diasDesde;
+                            diasCompletados += completados;
+                        }
+                    }
+                });
+
+                progresso = totalDias > 0 ? Math.round((diasCompletados / totalDias) * 100) : 0;
+            }
+
+            return Math.min(progresso, 100); // Máximo 100%
+        }
+
+        // Atualizar progresso de uma meta (chamado quando tracker é marcado)
+        function atualizarProgressoMeta(metaId) {
+            const meta = appState.metas.find(m => m.id === metaId);
+            if (!meta) return;
+
+            // 🎯 Para metas com valor numérico, recalcular o valorAtual total
+            if (meta.metadata && meta.metadata.valorAlvo && meta.metadata.unidade) {
+                const trackers = appState.habits.filter(h => h.metaId === metaId);
+                let valorTotal = 0;
+                
+                // Somar TODOS os completions de TODOS os dias de TODOS os trackers
+                trackers.forEach(tracker => {
+                    // Extrair valor do nome do tracker (ex: "Ler 10 páginas/dia" -> 10)
+                    const match = tracker.name.match(/(\d+(?:\.\d+)?)/);
+                    const valorPorDia = match ? parseFloat(match[1]) : 0;
+                    
+                    if (valorPorDia > 0) {
+                        // Contar quantos dias este tracker foi completado
+                        const diasCompletados = Object.keys(appState.completions).filter(k => 
+                            k.startsWith(`${tracker.id}-`) && appState.completions[k]
+                        ).length;
+                        
+                        valorTotal += valorPorDia * diasCompletados;
+                    }
+                });
+                
+                // Atualizar valorAtual (não ultrapassar o alvo)
+                meta.metadata.valorAtual = Math.min(valorTotal, meta.metadata.valorAlvo);
+            }
+
+            // Calcular novo progresso
+            const novoProgresso = calcularProgressoMeta(metaId);
+            
+            // Atualizar metadata
+            if (!meta.metadata) meta.metadata = {};
+            meta.metadata.progressoAtual = novoProgresso;
+            meta.metadata.ultimaAtualizacao = new Date().toISOString();
+
+            // Verificar se meta foi concluída
+            if (novoProgresso >= 100) {
+                meta.status = 'concluida';
+                meta.metadata.dataConclusao = new Date().toISOString();
+            }
+
+            saveData();
+        }
+
+        // Obter trackers de uma meta
+        function getTrackersFromMeta(metaId) {
+            return appState.habits.filter(h => h.metaId === metaId);
+        }
+
+        // Desvincular tracker de uma meta
+        function desvincularTracker(trackerId) {
+            const habit = appState.habits.find(h => h.id === trackerId);
+            if (habit) {
+                habit.metaId = null;
+                saveData();
+            }
+        }
+
+        // Vincular tracker a uma meta
+        function vincularTracker(trackerId, metaId) {
+            const habit = appState.habits.find(h => h.id === trackerId);
+            const meta = appState.metas.find(m => m.id === metaId);
+            
+            if (habit && meta) {
+                habit.metaId = metaId;
+                
+                // Adicionar à lista de trackers da meta se ainda não estiver
+                if (!meta.trackersIds.includes(trackerId)) {
+                    meta.trackersIds.push(trackerId);
+                }
+                
+                saveData();
+                atualizarProgressoMeta(metaId);
+            }
+        }
+
+        // Deletar meta
+        function deletarMeta(metaId) {
+            const index = appState.metas.findIndex(m => m.id === metaId);
+            if (index !== -1) {
+                // Desvincular todos os trackers
+                const trackers = getTrackersFromMeta(metaId);
+                trackers.forEach(t => desvincularTracker(t.id));
+                
+                // Remover meta
+                appState.metas.splice(index, 1);
+                saveData();
+            }
+        }
+
+        // Obter estatísticas de uma meta
+        function getMetaStats(metaId) {
+            const meta = appState.metas.find(m => m.id === metaId);
+            if (!meta) return null;
+
+            const trackers = getTrackersFromMeta(metaId);
+            const progresso = calcularProgressoMeta(metaId);
+            
+            // Calcular dias restantes
+            const hoje = new Date();
+            const dataFim = new Date(meta.dataFim);
+            const diasRestantes = Math.max(0, Math.ceil((dataFim - hoje) / (1000 * 60 * 60 * 24)));
+            
+            // Calcular dias desde criação
+            const dataCriacao = new Date(meta.dataCriacao);
+            const diasDesde = Math.ceil((hoje - dataCriacao) / (1000 * 60 * 60 * 24));
+
+            return {
+                progresso,
+                diasRestantes,
+                diasDesde,
+                totalTrackers: trackers.length,
+                trackersAtivos: trackers.filter(t => {
+                    const hoje = new Date().toISOString().split('T')[0];
+                    return appState.completions[`${t.id}-${hoje}`];
+                }).length
+            };
+        }
+
+        // ========================================
+        // FIM FUNÇÕES HELPER PARA METAS
+        // ========================================
+
         // Funções de navegação
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -1924,6 +2649,8 @@ async function loadFirebaseData(uid) {
             if (screenId === 'dashboard') updateDashboard();
             if (screenId === 'progress') updateProgress();
             if (screenId === 'settings') updateSettings();
+            if (screenId === 'metas') updateMetas(); // 🎯 NOVO
+            if (screenId === 'create-meta') setupCreateMeta(); // 🎯 NOVO - Setup criar meta
         }
 
         // ONBOARDING 1 - Seleção de foco
@@ -2015,7 +2742,8 @@ async function loadFirebaseData(uid) {
                 identity,
                 goal: goalNumber ? parseInt(goalNumber) : null,
                 goalType: frequency === 'dias-totais' ? 'days' : frequency === 'livros' ? 'books' : null,
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                metaId: null // 🎯 NOVO: ID da meta associada (null = hábito independente)
             };
 
             appState.habits.push(habit);
@@ -2348,6 +3076,663 @@ async function loadFirebaseData(uid) {
             "Hoje você escolheu ser melhor."
         ];
 
+        // 🎯 ATUALIZAR TELA DE METAS
+        function updateMetas() {
+            const metasContent = document.getElementById('metas-content');
+            
+            // Se não há metas, mostrar tela vazia
+            if (appState.metas.length === 0) {
+                metasContent.innerHTML = `
+                    <div class="meta-empty">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                        </svg>
+                        <h3>Você ainda não tem metas</h3>
+                        <p>Crie sua primeira meta e comece a transformar seus hábitos em grandes conquistas!</p>
+                        <button class="btn-create-meta" id="btn-create-first-meta">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Criar primeira meta
+                        </button>
+                    </div>
+                `;
+                
+                // Event listener para criar primeira meta
+                setTimeout(() => {
+                    setupCreateFirstMeta();
+                }, 100);
+                
+                return;
+            }
+            
+            // Renderizar metas
+            let html = '';
+            
+            // Botão de criar nova meta no topo
+            html += `
+                <button class="btn-create-meta" id="btn-create-meta" style="width: 100%; margin-bottom: 20px;">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Criar nova meta
+                </button>
+            `;
+            
+            // Renderizar cada meta
+            appState.metas.forEach(meta => {
+                const stats = getMetaStats(meta.id);
+                const trackers = getTrackersFromMeta(meta.id);
+                
+                const statusClass = meta.status === 'concluida' ? 'concluida' : meta.status === 'pausada' ? 'pausada' : '';
+                const statusText = meta.status === 'concluida' ? 'Concluída' : meta.status === 'pausada' ? 'Pausada' : 'Ativa';
+                
+                html += `
+                    <div class="meta-card" data-meta-id="${meta.id}">
+                        <div class="meta-card-header">
+                            <div>
+                                <div class="meta-card-title">${meta.nome}</div>
+                                <div class="meta-card-objective">${meta.objetivo}</div>
+                                ${meta.motivo ? `<div class="meta-card-motivo">💭 ${meta.motivo}</div>` : ''}
+                            </div>
+                            <div class="meta-card-status ${statusClass}">${statusText}</div>
+                        </div>
+                        
+                        <div class="meta-card-progress">
+                            <div class="meta-card-progress-bar">
+                                <div class="meta-card-progress-fill" style="width: ${stats.progresso}%"></div>
+                            </div>
+                            <div class="meta-card-stats">
+                                <span class="meta-card-progress-text">${stats.progresso}% completo</span>
+                                <span>${stats.diasRestantes} dias restantes</span>
+                            </div>
+                        </div>
+                        
+                        <div class="meta-card-footer">
+                            <div class="meta-card-trackers">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                <span>${trackers.length} micro-hábito${trackers.length !== 1 ? 's' : ''}</span>
+                            </div>
+                            <div>
+                                ${stats.trackersAtivos}/${trackers.length} completos hoje
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            metasContent.innerHTML = html;
+            
+            // Event listeners apenas para botão criar
+            const btnCreateMeta = document.getElementById('btn-create-meta');
+            if (btnCreateMeta) {
+                btnCreateMeta.addEventListener('click', () => {
+                    showScreen('create-meta'); // 🎯 Abrir tela de criar meta
+                });
+            }
+        }
+
+        // 🎯 MOSTRAR DETALHES DA META
+        let currentMetaId = null; // Guardar ID da meta atual
+        
+        function showMetaDetail(metaId) {
+            currentMetaId = metaId;
+            const meta = appState.metas.find(m => m.id === metaId);
+            
+            if (!meta) {
+                alert('Meta não encontrada');
+                return;
+            }
+            
+            const stats = getMetaStats(metaId);
+            const trackers = getTrackersFromMeta(metaId);
+            
+            // Preencher cabeçalho
+            document.getElementById('detail-meta-name').textContent = meta.nome;
+            document.getElementById('detail-meta-objetivo').textContent = meta.objetivo;
+            
+            // Mostrar motivo se existir
+            const motivoEl = document.getElementById('detail-meta-motivo');
+            const motivoTextEl = document.getElementById('detail-meta-motivo-text');
+            if (meta.motivo && meta.motivo.trim()) {
+                motivoTextEl.textContent = meta.motivo;
+                motivoEl.style.display = 'block';
+            } else {
+                motivoEl.style.display = 'none';
+            }
+            
+            // Preencher progresso
+            document.getElementById('detail-progress-percent').textContent = `${stats.progresso}%`;
+            document.getElementById('detail-progress-bar').style.width = `${stats.progresso}%`;
+            document.getElementById('detail-days-remaining').textContent = stats.diasRestantes;
+            
+            // Valor atual baseado no tipo
+            let currentValueText = '-';
+            if (meta.metadata) {
+                // 🎯 NOVO formato genérico
+                if (meta.metadata.valorAlvo !== undefined && meta.metadata.unidade) {
+                    const valorAtual = meta.metadata.valorAtual || 0;
+                    const valorAlvo = meta.metadata.valorAlvo;
+                    const unidade = meta.metadata.unidade;
+                    currentValueText = `${valorAtual}/${valorAlvo} ${unidade}`;
+                }
+                // Formatos antigos (compatibilidade)
+                else if (meta.metadata.paginasLidas !== undefined) {
+                    currentValueText = `${meta.metadata.paginasLidas}/${meta.metadata.totalPaginas} páginas`;
+                } else if (meta.metadata.pesoAtual !== undefined) {
+                    const perdido = (meta.metadata.pesoInicial - meta.metadata.pesoAtual).toFixed(1);
+                    const total = (meta.metadata.pesoInicial - meta.metadata.pesoAlvo).toFixed(1);
+                    currentValueText = `${perdido}/${total} kg perdidos`;
+                } else if (meta.metadata.valorEconomizado !== undefined) {
+                    currentValueText = `R$ ${meta.metadata.valorEconomizado.toFixed(2)}/${meta.metadata.valorAlvo.toFixed(2)}`;
+                } else if (meta.metadata.atual !== undefined) {
+                    currentValueText = `${meta.metadata.atual}/${meta.metadata.total} ${meta.metadata.metrica}`;
+                }
+            }
+            document.getElementById('detail-current-value').textContent = currentValueText;
+            
+            // Renderizar trackers
+            const trackersListEl = document.getElementById('detail-trackers-list');
+            
+            if (trackers.length === 0) {
+                trackersListEl.innerHTML = `
+                    <p style="color: var(--text-secondary); text-align: center; padding: 20px;">
+                        Nenhum micro-hábito vinculado a esta meta
+                    </p>
+                `;
+            } else {
+                trackersListEl.innerHTML = trackers.map(tracker => {
+                    // Calcular streak
+                    let streak = 0;
+                    const today = new Date();
+                    for (let i = 0; i < 365; i++) {
+                        const checkDate = new Date(today);
+                        checkDate.setDate(checkDate.getDate() - i);
+                        const dateKey = checkDate.toISOString().split('T')[0];
+                        if (appState.completions[`${tracker.id}-${dateKey}`]) {
+                            streak++;
+                        } else {
+                            break;
+                        }
+                    }
+                    
+                    // Contar completados
+                    const totalCompletions = Object.keys(appState.completions).filter(k => 
+                        k.startsWith(`${tracker.id}-`) && appState.completions[k]
+                    ).length;
+                    
+                    // Verificar se completou hoje
+                    const todayKey = today.toISOString().split('T')[0];
+                    const completedToday = appState.completions[`${tracker.id}-${todayKey}`] || false;
+                    
+                    const completedClass = completedToday ? 'completed' : 'incomplete';
+                    
+                    return `
+                        <div class="detail-tracker-item ${completedToday ? 'completed' : ''}">
+                            <div class="detail-tracker-header">
+                                <div class="detail-tracker-name ${completedClass}">${tracker.name}</div>
+                            </div>
+                            <div class="detail-tracker-stats">
+                                <div class="detail-tracker-stat">
+                                    Streak: <strong>${streak} dia${streak !== 1 ? 's' : ''}</strong>
+                                </div>
+                                <div class="detail-tracker-stat">
+                                    Total: <strong>${totalCompletions} vezes</strong>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // Renderizar histórico (últimos 7 dias)
+            const historyEl = document.getElementById('detail-history');
+            const historyDays = [];
+            
+            for (let i = 0; i < 7; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateKey = date.toISOString().split('T')[0];
+                
+                // Contar quantos trackers foram completados neste dia
+                const completedCount = trackers.filter(t => 
+                    appState.completions[`${t.id}-${dateKey}`]
+                ).length;
+                
+                if (completedCount > 0) {
+                    historyDays.push({
+                        date: date.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }),
+                        value: `${completedCount}/${trackers.length} completos`
+                    });
+                }
+            }
+            
+            if (historyDays.length === 0) {
+                historyEl.innerHTML = `
+                    <p style="color: var(--text-secondary); text-align: center; padding: 20px;">
+                        Nenhum progresso registrado nos últimos 7 dias
+                    </p>
+                `;
+            } else {
+                historyEl.innerHTML = historyDays.map(day => `
+                    <div class="detail-history-item">
+                        <div class="detail-history-date">${day.date}</div>
+                        <div class="detail-history-value">${day.value}</div>
+                    </div>
+                `).join('');
+            }
+            
+            // Previsão
+            const predictionEl = document.getElementById('detail-prediction');
+            const predictionText = document.getElementById('detail-prediction-text');
+            
+            if (stats.progresso > 0 && stats.diasRestantes > 0) {
+                const diasDecorridos = stats.diasDesde;
+                const progressoPorDia = stats.progresso / diasDecorridos;
+                const diasParaConcluir = Math.ceil((100 - stats.progresso) / progressoPorDia);
+                
+                let prediction = '';
+                if (diasParaConcluir <= stats.diasRestantes) {
+                    prediction = `No ritmo atual, você completará esta meta em aproximadamente <strong>${diasParaConcluir} dias</strong>. Você está no caminho certo! 🎯`;
+                } else {
+                    const diasAtras = diasParaConcluir - stats.diasRestantes;
+                    prediction = `No ritmo atual, você está cerca de <strong>${diasAtras} dias atrás</strong> do prazo. Que tal aumentar a frequência dos micro-hábitos? 💪`;
+                }
+                
+                predictionText.innerHTML = prediction;
+                predictionEl.style.display = 'block';
+            } else {
+                predictionEl.style.display = 'none';
+            }
+            
+            // Mostrar tela
+            showScreen('meta-detail');
+            
+            // 🎯 Inicializar botões de detalhes (fazer uma vez só)
+            initMetaDetailButtons();
+        }
+        
+        // 🎯 Função para inicializar botões da tela de detalhes
+        function initMetaDetailButtons() {
+            const btnBack = document.getElementById('btn-back-to-metas');
+            const btnDelete = document.getElementById('btn-delete-meta');
+            
+            // Remover listeners antigos (se existirem) criando novos elementos
+            const newBtnBack = btnBack.cloneNode(true);
+            const newBtnDelete = btnDelete.cloneNode(true);
+            btnBack.parentNode.replaceChild(newBtnBack, btnBack);
+            btnDelete.parentNode.replaceChild(newBtnDelete, btnDelete);
+            
+            // Adicionar novos listeners
+            document.getElementById('btn-back-to-metas').addEventListener('click', () => {
+                showScreen('metas');
+            });
+
+            document.getElementById('btn-delete-meta').addEventListener('click', () => {
+                if (!currentMetaId) {
+                    console.log('Nenhuma meta selecionada');
+                    return;
+                }
+                
+                const meta = appState.metas.find(m => m.id === currentMetaId);
+                if (!meta) {
+                    console.log('Meta não encontrada');
+                    return;
+                }
+                
+                if (confirm(`Tem certeza que deseja excluir a meta "${meta.nome}"?`)) {
+                    console.log('Excluindo meta:', currentMetaId);
+                    deletarMeta(currentMetaId);
+                    showSuccessMessage('Meta excluída com sucesso!');
+                    showScreen('metas');
+                }
+            });
+        }
+
+        // 🎯 LÓGICA PARA CRIAR META
+        function setupCreateMeta() {
+            // 🎯 Mostrar/esconder campo de X vezes por semana
+            document.getElementById('meta-frequency').addEventListener('change', function() {
+                const customField = document.getElementById('custom-frequency-field');
+                const hasNumericCheckbox = document.getElementById('has-numeric-goal');
+                const numericFields = document.getElementById('numeric-goal-fields');
+                
+                if (this.value === 'custom') {
+                    customField.style.display = 'block';
+                } else {
+                    customField.style.display = 'none';
+                }
+                
+                // 🎯 Se selecionou "Meta total", auto-marcar meta numérica
+                if (this.value === 'total') {
+                    hasNumericCheckbox.checked = true;
+                    numericFields.style.display = 'block';
+                }
+                
+                calculateMetaSuggestion();
+            });
+
+            // 🎯 Mostrar/esconder campos de meta numérica
+            document.getElementById('has-numeric-goal').addEventListener('change', function() {
+                const numericFields = document.getElementById('numeric-goal-fields');
+                numericFields.style.display = this.checked ? 'block' : 'none';
+                calculateMetaSuggestion();
+            });
+            
+            // 🎯 Mostrar/esconder campo de unidade customizada
+            document.getElementById('numeric-unit-select').addEventListener('change', function() {
+                const customUnitField = document.getElementById('custom-unit-field');
+                if (this.value === 'custom') {
+                    customUnitField.style.display = 'block';
+                } else {
+                    customUnitField.style.display = 'none';
+                }
+                calculateMetaSuggestion();
+            });
+
+            // Calcular sugestões quando campos mudarem
+            document.getElementById('meta-deadline').addEventListener('change', calculateMetaSuggestion);
+            document.getElementById('numeric-target').addEventListener('input', calculateMetaSuggestion);
+            document.getElementById('numeric-unit-select').addEventListener('change', calculateMetaSuggestion);
+            document.getElementById('numeric-unit-custom').addEventListener('input', calculateMetaSuggestion);
+            document.getElementById('times-per-week').addEventListener('input', calculateMetaSuggestion);
+        }
+
+        function calculateMetaSuggestion() {
+            const deadline = document.getElementById('meta-deadline').value;
+            const frequency = document.getElementById('meta-frequency').value;
+            const hasNumeric = document.getElementById('has-numeric-goal').checked;
+            const suggestionDiv = document.getElementById('meta-suggestion');
+            const suggestionText = document.getElementById('meta-suggestion-text');
+            const btnCreateAuto = document.getElementById('btn-create-auto-tracker');
+            const btnText = document.getElementById('btn-create-auto-tracker-text');
+            
+            // Esconder por padrão
+            suggestionDiv.style.display = 'none';
+            btnCreateAuto.style.display = 'none';
+            
+            if (!deadline || !frequency) return;
+            
+            const today = new Date();
+            const deadlineDate = new Date(deadline);
+            const daysRemaining = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
+            
+            if (daysRemaining <= 0) return;
+            
+            let suggestion = '';
+            let autoTrackerName = '';
+            
+            // Calcular baseado na frequência e meta numérica
+            if (hasNumeric) {
+                const target = parseFloat(document.getElementById('numeric-target').value);
+                const unitSelect = document.getElementById('numeric-unit-select').value;
+                let unit = unitSelect;
+                
+                // Se selecionou "custom", pegar do campo de texto
+                if (unitSelect === 'custom') {
+                    unit = document.getElementById('numeric-unit-custom').value.trim() || 'unidades';
+                } else if (!unitSelect) {
+                    unit = 'unidades';
+                }
+                
+                if (!target || target <= 0) return;
+                
+                if (frequency === 'total') {
+                    // Meta total - foco no valor total
+                    const perDay = (target / daysRemaining).toFixed(1);
+                    suggestion = `Para completar <strong>${target} ${unit}</strong> em ${daysRemaining} dias, você precisa fazer cerca de <strong>${perDay} ${unit} por dia</strong> em média.`;
+                    autoTrackerName = `Fazer ${perDay} ${unit}/dia`;
+                } else if (frequency === 'daily') {
+                    // Diário
+                    const perDay = Math.ceil(target / daysRemaining);
+                    suggestion = `Para completar <strong>${target} ${unit}</strong> em ${daysRemaining} dias (todos os dias), faça <strong>${perDay} ${unit}/dia</strong>.`;
+                    autoTrackerName = `Fazer ${perDay} ${unit}/dia`;
+                } else if (frequency === 'weekdays') {
+                    // Dias da semana (5 dias)
+                    const weekdaysCount = Math.floor(daysRemaining / 7) * 5 + (daysRemaining % 7);
+                    const perDay = Math.ceil(target / weekdaysCount);
+                    suggestion = `Para completar <strong>${target} ${unit}</strong> em ${weekdaysCount} dias úteis, faça <strong>${perDay} ${unit}/dia útil</strong>.`;
+                    autoTrackerName = `Fazer ${perDay} ${unit}/dia útil`;
+                } else if (frequency === 'weekend') {
+                    // Fins de semana (2 dias)
+                    const weekendCount = Math.floor(daysRemaining / 7) * 2;
+                    const perDay = Math.ceil(target / weekendCount);
+                    suggestion = `Para completar <strong>${target} ${unit}</strong> em ${weekendCount} fins de semana, faça <strong>${perDay} ${unit} por fim de semana</strong>.`;
+                    autoTrackerName = `Fazer ${perDay} ${unit} (fim de semana)`;
+                } else if (frequency === 'custom') {
+                    // X vezes por semana
+                    const timesPerWeek = parseInt(document.getElementById('times-per-week').value) || 3;
+                    const totalTimes = Math.floor(daysRemaining / 7) * timesPerWeek;
+                    const perSession = Math.ceil(target / totalTimes);
+                    suggestion = `Para completar <strong>${target} ${unit}</strong> fazendo ${timesPerWeek}x por semana, faça <strong>${perSession} ${unit} por sessão</strong>.`;
+                    autoTrackerName = `Fazer ${perSession} ${unit} (${timesPerWeek}x/sem)`;
+                }
+            } else {
+                // Sem meta numérica - sugestões genéricas
+                if (frequency === 'total') {
+                    suggestion = `Você tem <strong>${daysRemaining} dias</strong> para alcançar sua meta. Foque no valor total, não na frequência!`;
+                } else if (frequency === 'daily') {
+                    suggestion = `Meta diária por <strong>${daysRemaining} dias</strong>. Consistência é a chave! 🎯`;
+                    autoTrackerName = 'Completar meta diária';
+                } else if (frequency === 'weekdays') {
+                    const weekdaysCount = Math.floor(daysRemaining / 7) * 5 + (daysRemaining % 7);
+                    suggestion = `Meta de segunda a sexta por <strong>${weekdaysCount} dias úteis</strong>. Fins de semana são de descanso! 😊`;
+                    autoTrackerName = 'Completar meta (seg-sex)';
+                } else if (frequency === 'weekend') {
+                    const weekendCount = Math.floor(daysRemaining / 7) * 2;
+                    suggestion = `Meta nos fins de semana por <strong>${weekendCount} dias</strong>. Use o tempo livre! 🏖️`;
+                    autoTrackerName = 'Completar meta (fim de semana)';
+                } else if (frequency === 'custom') {
+                    const timesPerWeek = parseInt(document.getElementById('times-per-week').value) || 3;
+                    const totalTimes = Math.floor(daysRemaining / 7) * timesPerWeek;
+                    suggestion = `Fazendo <strong>${timesPerWeek}x por semana</strong>, você terá cerca de <strong>${totalTimes} sessões</strong> até o prazo.`;
+                    autoTrackerName = `Completar meta (${timesPerWeek}x/sem)`;
+                }
+            }
+            
+            if (suggestion) {
+                suggestionText.innerHTML = suggestion;
+                suggestionDiv.style.display = 'block';
+                
+                // Mostrar botão de criar tracker automático
+                if (autoTrackerName) {
+                    btnText.textContent = `✨ Criar: "${autoTrackerName}"`;
+                    btnCreateAuto.style.display = 'flex';
+                    btnCreateAuto.dataset.autoTrackerName = autoTrackerName;
+                }
+            }
+        }
+
+        // 🎯 Criar micro-hábito automaticamente
+        let autoCreatedTrackerId = null; // Guardar ID do tracker criado automaticamente
+        
+        document.getElementById('btn-create-auto-tracker').addEventListener('click', function() {
+            const trackerName = this.dataset.autoTrackerName;
+            const trackerType = this.dataset.autoTrackerType;
+            
+            if (!trackerName) return;
+            
+            // Criar o hábito
+            const newHabit = {
+                id: Date.now(),
+                name: trackerName,
+                frequency: 'diario',
+                reminderTime: '',
+                identity: 'Uma pessoa disciplinada',
+                goal: null,
+                goalType: null,
+                createdAt: new Date().toISOString(),
+                metaId: null // Será vinculado depois
+            };
+            
+            appState.habits.push(newHabit);
+            autoCreatedTrackerId = newHabit.id;
+            saveData();
+            
+            // Atualizar UI - mudar botão
+            this.style.background = 'var(--accent)';
+            this.innerHTML = `
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-right: 8px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                ✓ Micro-hábito criado e será vinculado automaticamente!
+            `;
+            this.disabled = true;
+        });
+
+        // Salvar meta
+        document.getElementById('save-meta').addEventListener('click', () => {
+            const metaName = document.getElementById('meta-name').value.trim();
+            const metaDeadline = document.getElementById('meta-deadline').value;
+            const metaFrequency = document.getElementById('meta-frequency').value;
+            const hasNumeric = document.getElementById('has-numeric-goal').checked;
+            
+            // Coletar objetivo e motivo (sempre visíveis agora)
+            const metaObjetivo = document.getElementById('meta-objetivo').value.trim();
+            const metaMotivo = document.getElementById('meta-motivo').value.trim();
+            
+            // Validação
+            if (!metaName) {
+                alert('Por favor, dê um nome à sua meta');
+                return;
+            }
+            
+            if (!metaObjetivo) {
+                alert('Por favor, descreva o que você quer alcançar');
+                return;
+            }
+            
+            if (!metaDeadline) {
+                alert('Por favor, defina um prazo para conclusão');
+                return;
+            }
+            
+            if (!metaFrequency) {
+                alert('Por favor, selecione a frequência da meta');
+                return;
+            }
+            
+            // Verificar se prazo é no futuro
+            const deadlineDate = new Date(metaDeadline);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (deadlineDate <= today) {
+                alert('O prazo deve ser uma data futura');
+                return;
+            }
+            
+            // 🎯 Vincular apenas o tracker criado automaticamente (se houver)
+            const selectedTrackers = [];
+            if (autoCreatedTrackerId) {
+                selectedTrackers.push(autoCreatedTrackerId);
+            }
+            
+            // Coletar metadata
+            const metadata = {
+                frequencia: metaFrequency
+            };
+            
+            // Se frequência personalizada, adicionar
+            if (metaFrequency === 'custom') {
+                metadata.vezesPorSemana = parseInt(document.getElementById('times-per-week').value) || 3;
+            }
+            
+            // Se tem meta numérica
+            if (hasNumeric) {
+                const numericTarget = parseFloat(document.getElementById('numeric-target').value);
+                const unitSelect = document.getElementById('numeric-unit-select').value;
+                let numericUnit = unitSelect;
+                
+                // Se selecionou "custom", pegar do campo de texto
+                if (unitSelect === 'custom') {
+                    numericUnit = document.getElementById('numeric-unit-custom').value.trim();
+                }
+                
+                if (!numericTarget || numericTarget <= 0) {
+                    alert('Por favor, defina a quantidade da meta');
+                    return;
+                }
+                
+                if (!numericUnit || numericUnit === 'custom') {
+                    alert('Por favor, selecione ou digite a unidade');
+                    return;
+                }
+                
+                metadata.valorInicial = 0;  // Sempre começa do zero
+                metadata.valorAlvo = numericTarget;
+                metadata.valorAtual = 0;
+                metadata.unidade = numericUnit;
+            }
+            
+            // Criar meta
+            const novaMeta = criarMeta({
+                nome: metaName,
+                objetivo: metaObjetivo || metaName, // Usar objetivo se preenchido, senão nome
+                motivo: metaMotivo || '', // Motivo opcional
+                dataFim: new Date(metaDeadline + 'T23:59:59').toISOString(),
+                trackersIds: selectedTrackers,
+                metadata: metadata
+            });
+            
+            // Mostrar mensagem de sucesso
+            showSuccessMessage(`Meta "${metaName}" criada com sucesso! 🎯`);
+            
+            // Limpar formulário
+            document.getElementById('meta-name').value = '';
+            document.getElementById('meta-objetivo').value = '';
+            document.getElementById('meta-motivo').value = '';
+            document.getElementById('meta-deadline').value = '';
+            document.getElementById('meta-frequency').value = '';
+            document.getElementById('has-numeric-goal').checked = false;
+            document.getElementById('numeric-goal-fields').style.display = 'none';
+            document.getElementById('numeric-target').value = '';
+            document.getElementById('numeric-unit-select').value = '';
+            document.getElementById('numeric-unit-custom').value = '';
+            document.getElementById('custom-unit-field').style.display = 'none';
+            document.getElementById('custom-frequency-field').style.display = 'none';
+            document.getElementById('meta-suggestion').style.display = 'none';
+            
+            // 🎯 Resetar botão de criar tracker automático
+            const btnCreateAuto = document.getElementById('btn-create-auto-tracker');
+            btnCreateAuto.style.display = 'none';
+            btnCreateAuto.disabled = false;
+            btnCreateAuto.style.background = '';
+            autoCreatedTrackerId = null;
+            
+            // Voltar para tela de metas
+            setTimeout(() => {
+                showScreen('metas');
+            }, 1500);
+        });
+
+        // Cancelar criação de meta
+        document.getElementById('cancel-meta').addEventListener('click', () => {
+            if (confirm('Deseja cancelar a criação da meta?')) {
+                // Resetar botão
+                const btnCreateAuto = document.getElementById('btn-create-auto-tracker');
+                btnCreateAuto.style.display = 'none';
+                btnCreateAuto.disabled = false;
+                btnCreateAuto.style.background = '';
+                autoCreatedTrackerId = null;
+                
+                showScreen('metas');
+            }
+        });
+
+        // Atualizar evento de criar primeira meta
+        function setupCreateFirstMeta() {
+            const btnFirstMeta = document.getElementById('btn-create-first-meta');
+            if (btnFirstMeta) {
+                btnFirstMeta.addEventListener('click', () => {
+                    setupCreateMeta();
+                    showScreen('create-meta');
+                });
+            }
+        }
+
         function toggleHabitCompletion(habitId) {
             const dateKey = appState.selectedDate;
             const key = `${habitId}-${dateKey}`;
@@ -2356,6 +3741,13 @@ async function loadFirebaseData(uid) {
             
             if (appState.completions[key]) {
                 showSuccessMessage();
+            }
+            
+            // 🎯 NOVO: Atualizar progresso da meta se o tracker estiver vinculado
+            const habit = appState.habits.find(h => h.id === habitId);
+            if (habit && habit.metaId) {
+                atualizarProgressoMeta(habit.metaId);
+                updateMetas();  // Atualizar lista de metas
             }
             
             saveData();
@@ -2469,6 +3861,9 @@ async function loadFirebaseData(uid) {
                 updateProgress();
             }
         }
+        
+        // 🎯 Tornar função acessível globalmente para onclick
+        window.deleteHabit = deleteHabit;
 
         document.getElementById('export-data').addEventListener('click', () => {
             const dataStr = JSON.stringify(appState, null, 2);
